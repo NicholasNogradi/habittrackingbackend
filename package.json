@@ -1,0 +1,22 @@
+{
+  "name": "habit-tracker-api",
+  "version": "1.0.0",
+  "description": "Habit Tracking API — Express + Sequelize + SQLite implementation of the OpenAPI 3.1 spec",
+  "type": "module",
+  "main": "src/server.js",
+  "scripts": {
+    "start": "node src/server.js",
+    "dev": "node --watch src/server.js",
+    "seed": "node src/seed.js"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  },
+  "dependencies": {
+    "express": "^4.19.2",
+    "sequelize": "^6.37.3",
+    "sqlite3": "^5.1.7",
+    "jsonwebtoken": "^9.0.2",
+    "zod": "^3.23.8"
+  }
+}
