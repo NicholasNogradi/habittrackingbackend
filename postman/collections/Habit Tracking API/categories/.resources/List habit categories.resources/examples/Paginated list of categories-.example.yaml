@@ -1,0 +1,159 @@
+$kind: http-example
+name: Paginated list of categories.
+request:
+  url: "{{baseUrl}}/categories?limit=20&cursor=eyJpZCI6IjEyMyIsInRzIjoiMjAyNS0wMS0wMVQwMDowMDowMFoifQ=="
+  method: GET
+  headers:
+    - key: Accept
+      value: application/json
+    - key: Authorization
+      value: Bearer <token>
+      description: "Added as a part of security scheme: bearer"
+  queryParams:
+    - key: limit
+      value: "20"
+      description: Maximum number of items to return per page (1–100).
+    - key: cursor
+      value: eyJpZCI6IjEyMyIsInRzIjoiMjAyNS0wMS0wMVQwMDowMDowMFoifQ==
+      description: Opaque pagination cursor returned by the previous page response.
+response:
+  statusCode: 200
+  statusText: OK
+  headers:
+    Content-Type: application/json
+    X-RateLimit-Limit: ""
+    X-RateLimit-Remaining: ""
+    X-RateLimit-Reset: ""
+  body:
+    type: json
+    content: |-
+      {
+        "pagination": {
+          "totalCount": 1911,
+          "hasMore": false,
+          "nextCursor": "string",
+          "prevCursor": "string"
+        },
+        "data": [
+          {
+            "id": "3fad1faa-e4e8-3517-6fb6-b85d3f08b2f6",
+            "name": "Health & Fitness",
+            "createdAt": "1958-08-31T10:13:08.706Z",
+            "updatedAt": "2019-05-11T00:47:53.795Z",
+            "description": "string",
+            "color": "#4CAF50",
+            "icon": "dumbbell",
+            "habitCount": 5298
+          },
+          {
+            "id": "a83ea4e4-0996-f552-f529-902e8f7ce849",
+            "name": "Health & Fitness",
+            "createdAt": "1955-06-18T03:07:40.291Z",
+            "updatedAt": "1994-01-29T10:48:26.845Z",
+            "description": "string",
+            "color": "#4CAF50",
+            "icon": "dumbbell",
+            "habitCount": 3831
+          }
+        ]
+      }
+    $type: |-
+      {
+        "allOf": [
+          {
+            "type": "object",
+            "properties": {
+              "pagination": {
+                "type": "object",
+                "properties": {
+                  "totalCount": {
+                    "type": "integer",
+                    "description": "Total number of items matching the query.",
+                    "format": "int64"
+                  },
+                  "hasMore": {
+                    "type": "boolean",
+                    "description": "Whether additional pages are available."
+                  },
+                  "nextCursor": {
+                    "type": "string",
+                    "description": "Opaque cursor to pass as `cursor` in the next request."
+                  },
+                  "prevCursor": {
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "totalCount",
+                  "hasMore"
+                ]
+              }
+            },
+            "required": [
+              "pagination"
+            ]
+          },
+          {
+            "type": "object",
+            "properties": {
+              "data": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "id": {
+                      "type": "string",
+                      "format": "uuid"
+                    },
+                    "name": {
+                      "type": "string",
+                      "minLength": 1,
+                      "maxLength": 80,
+                      "example": "Health & Fitness"
+                    },
+                    "description": {
+                      "type": "string",
+                      "maxLength": 500
+                    },
+                    "color": {
+                      "type": "string",
+                      "pattern": "^#[0-9A-Fa-f]{6}$",
+                      "example": "#4CAF50",
+                      "description": "Hex colour code for UI theming."
+                    },
+                    "icon": {
+                      "type": "string",
+                      "maxLength": 50,
+                      "example": "dumbbell",
+                      "description": "Icon identifier (e.g. icon library slug)."
+                    },
+                    "habitCount": {
+                      "type": "integer",
+                      "description": "Number of habits assigned to this category.",
+                      "format": "int32"
+                    },
+                    "createdAt": {
+                      "type": "string",
+                      "format": "date-time"
+                    },
+                    "updatedAt": {
+                      "type": "string",
+                      "format": "date-time"
+                    }
+                  },
+                  "required": [
+                    "id",
+                    "name",
+                    "createdAt",
+                    "updatedAt"
+                  ]
+                }
+              }
+            },
+            "required": [
+              "data"
+            ]
+          }
+        ]
+      }
+order: 1000

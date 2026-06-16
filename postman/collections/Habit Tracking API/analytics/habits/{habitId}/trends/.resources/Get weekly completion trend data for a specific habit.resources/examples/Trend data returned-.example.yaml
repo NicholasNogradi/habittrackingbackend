@@ -1,0 +1,107 @@
+$kind: http-example
+name: Trend data returned.
+request:
+  url: "{{baseUrl}}/analytics/habits/:habitId/trends?from=1968-02-14&to=1968-02-14&granularity=weekly"
+  method: GET
+  headers:
+    - key: Accept
+      value: application/json
+    - key: Authorization
+      value: Bearer <token>
+      description: "Added as a part of security scheme: bearer"
+  queryParams:
+    - key: from
+      value: 1968-02-14
+    - key: to
+      value: 1968-02-14
+    - key: granularity
+      value: weekly
+      description: Aggregation granularity.
+  pathVariables:
+    - key: habitId
+      value: 3fa85f64-5717-4562-b3fc-2c963f66afa6
+      description: Unique identifier of the habit.
+response:
+  statusCode: 200
+  statusText: OK
+  headers:
+    Content-Type: application/json
+    Cache-Control: ""
+  body:
+    type: json
+    content: |-
+      {
+        "habitId": "dc14f2c0-8175-eab8-a69e-659b4280e2d4",
+        "granularity": "weekly",
+        "dataPoints": [
+          {
+            "periodStart": "1978-01-25",
+            "completionRate": 0.7087705803355833,
+            "checkinsCount": 8121,
+            "streakAtEnd": 2027
+          },
+          {
+            "periodStart": "2006-05-05",
+            "completionRate": 0.8499274372268673,
+            "checkinsCount": 9110,
+            "streakAtEnd": 6517
+          }
+        ]
+      }
+    $type: |-
+      {
+        "type": "object",
+        "properties": {
+          "habitId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "granularity": {
+            "type": "string",
+            "enum": [
+              "daily",
+              "weekly",
+              "monthly"
+            ]
+          },
+          "dataPoints": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "periodStart": {
+                  "type": "string",
+                  "description": "Start date of the aggregation period.",
+                  "format": "date"
+                },
+                "completionRate": {
+                  "type": "number",
+                  "minimum": 0,
+                  "maximum": 1,
+                  "format": "double"
+                },
+                "checkinsCount": {
+                  "type": "integer",
+                  "format": "int32"
+                },
+                "streakAtEnd": {
+                  "type": "integer",
+                  "description": "Active streak length at the end of this period.",
+                  "format": "int32"
+                }
+              },
+              "required": [
+                "periodStart",
+                "completionRate",
+                "checkinsCount"
+              ]
+            }
+          }
+        },
+        "required": [
+          "habitId",
+          "granularity",
+          "dataPoints"
+        ]
+      }
+order: 1000

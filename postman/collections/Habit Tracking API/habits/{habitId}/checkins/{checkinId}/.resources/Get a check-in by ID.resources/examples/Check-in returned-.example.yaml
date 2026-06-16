@@ -1,0 +1,86 @@
+$kind: http-example
+name: Check-in returned.
+request:
+  url: "{{baseUrl}}/habits/:habitId/checkins/:checkinId"
+  method: GET
+  headers:
+    - key: Accept
+      value: application/json
+    - key: Authorization
+      value: Bearer <token>
+      description: "Added as a part of security scheme: bearer"
+  pathVariables:
+    - key: habitId
+      value: 3fa85f64-5717-4562-b3fc-2c963f66afa6
+      description: Unique identifier of the habit.
+    - key: checkinId
+      value: a1b2c3d4-e5f6-7890-abcd-ef1234567890
+      description: Unique identifier of the check-in.
+response:
+  statusCode: 200
+  statusText: OK
+  headers:
+    Content-Type: application/json
+    ETag: ""
+  body:
+    type: json
+    content: |-
+      {
+        "id": "215eaaa5-79b2-2a84-e27c-640425c86864",
+        "habitId": "7c1c8a1d-e10f-9eae-197a-eed55095cb09",
+        "date": "2025-06-04",
+        "status": "completed",
+        "createdAt": "2019-12-23T10:52:13.929Z",
+        "updatedAt": "2002-08-17T06:57:38.863Z",
+        "value": 35,
+        "note": "string",
+        "mood": 1
+      }
+    $type: |-
+      {
+        "type": "object",
+        "properties": {
+          "date": {
+            "type": "string",
+            "example": "2025-06-04",
+            "description": "Calendar date the check-in applies to.",
+            "format": "date"
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "completed",
+              "skipped",
+              "missed"
+            ],
+            "description": "Completion status of a check-in period."
+          },
+          "value": {
+            "type": "number",
+            "example": 35,
+            "description": "Quantitative value recorded (e.g. 35 minutes run).",
+            "format": "double"
+          },
+          "note": {
+            "type": "string",
+            "maxLength": 1000,
+            "description": "Free-text note for this check-in."
+          },
+          "mood": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 5,
+            "description": "Optional mood rating (1 = very poor, 5 = excellent).",
+            "format": "int32"
+          }
+        },
+        "required": [
+          "id",
+          "habitId",
+          "date",
+          "status",
+          "createdAt",
+          "updatedAt"
+        ]
+      }
+order: 1000

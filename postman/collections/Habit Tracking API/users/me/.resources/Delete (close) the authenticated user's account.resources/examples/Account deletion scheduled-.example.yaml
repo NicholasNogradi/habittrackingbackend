@@ -1,0 +1,16 @@
+$kind: http-example
+name: Account deletion scheduled.
+request:
+  url: "{{baseUrl}}/users/me"
+  method: DELETE
+  headers:
+    - key: Authorization
+      value: Bearer <token>
+      description: "Added as a part of security scheme: bearer"
+response:
+  statusCode: 204
+  statusText: No Content
+  body:
+    type: text
+    content: ""
+order: 1000

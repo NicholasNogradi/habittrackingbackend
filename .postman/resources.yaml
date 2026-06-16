@@ -1,0 +1,16 @@
+workspace:
+  id: 11858b98-e156-4275-9db9-1ce675bfc729
+localResources:
+  collections:
+    - ../postman/collections/Habit Tracking API
+  environments:
+    - ../postman/environments/Habit_Tracker_Mock.environment.yaml
+  specs:
+    - ../index.yaml
+cloudResources:
+  collections:
+    ../postman/collections/Habit Tracking API: 55289350-afb2f2d3-5f17-4028-a29e-71d80615a938
+  environments:
+    ../postman/environments/Habit_Tracker_Mock.environment.yaml: 55289350-ebb73393-4917-4ca0-853a-a4e3282742ed
+  specs:
+    ../index.yaml: 2857c41a-6f4c-4723-b1f7-1db06f0e267c

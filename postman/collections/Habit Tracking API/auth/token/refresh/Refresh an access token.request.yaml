@@ -1,0 +1,28 @@
+$kind: http-request
+description: Exchange a valid refresh token for a new access token.
+url: "{{baseUrl}}/auth/token/refresh"
+method: POST
+headers:
+  Content-Type: application/json
+  Accept: application/json
+body:
+  type: json
+  content: |-
+    {
+      "refresh_token": "string"
+    }
+  $type: |-
+    {
+      "type": "object",
+      "properties": {
+        "refresh_token": {
+          "type": "string",
+          "description": "A valid refresh token previously issued by the server."
+        }
+      },
+      "required": [
+        "refresh_token"
+      ]
+    }
+examples: ./.resources/Refresh an access token.resources/examples
+order: 1000

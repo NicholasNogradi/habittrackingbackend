@@ -1,0 +1,45 @@
+$kind: collection
+description: |-
+  ## Overview
+  The Habit Tracking API provides a comprehensive, RESTful interface for creating,
+  managing, and analysing personal habits and their completion records. It is designed
+  for multi-tenant SaaS deployments and supports both individual users and teams.
+
+  ## Authentication
+  All endpoints (except `/auth/*`) require a valid **Bearer** (JWT) token obtained
+  via the OAuth 2.0 Authorization Code flow or the Password flow (for first-party
+  clients). Tokens expire after **3 600 seconds**; use the refresh-token grant to
+  obtain a new access token without prompting the user.
+
+  ## Versioning
+  The API is versioned through the URL path (`/v1`). Breaking changes will be
+  introduced in a new major version. Minor and patch releases are backwards-compatible.
+
+  ## Rate Limiting
+  Responses include `X-RateLimit-Limit`, `X-RateLimit-Remaining`, and
+  `X-RateLimit-Reset` headers. Exceeding the limit returns **429 Too Many Requests**.
+
+  ## Pagination
+  Collection endpoints support cursor-based pagination via `cursor` and `limit`
+  query parameters. Responses include a `pagination` envelope with `nextCursor` and
+  `totalCount`.
+
+  ## Idempotency
+  `POST` endpoints that create resources accept an optional `Idempotency-Key` header.
+  Submitting the same key within 24 hours returns the original response without
+  creating a duplicate resource.
+
+
+  Contact Support:
+   Name: Platform Engineering
+   Email: platform-engineering@habittrack.io
+variables:
+  baseUrl: ""
+  mockUrl: ""
+  bearerToken: ""
+auth:
+  - id: c92b271c-8bb7-447c-921f-3bf46c45777f
+    type: bearer
+    name: bearer auth
+    credentials:
+      token: "{{bearerToken}}"

@@ -1,0 +1,92 @@
+$kind: http-request
+description: |
+  Records a habit completion for a specific date. Only one check-in
+  per habit per day is permitted; submitting a duplicate returns **409**.
+url: "{{baseUrl}}/habits/:habitId/checkins"
+method: POST
+headers:
+  - key: Idempotency-Key
+    value: 550e8400-e29b-41d4-a716-446655440000
+    description: |
+      Client-generated UUID to make the request idempotent.
+      The same key within 24 hours returns the original response.
+    $type: |-
+      {
+        "type": "object",
+        "properties": {
+          "value": {
+            "type": "string",
+            "format": "uuid"
+          }
+        }
+      }
+  - key: Content-Type
+    value: application/json
+  - key: Accept
+    value: application/json
+pathVariables:
+  - key: habitId
+    value: 3fa85f64-5717-4562-b3fc-2c963f66afa6
+    description: Unique identifier of the habit.
+    $type: |-
+      {
+        "type": "object",
+        "properties": {
+          "value": {
+            "type": "string",
+            "format": "uuid"
+          }
+        },
+        "required": [
+          "value"
+        ]
+      }
+body:
+  type: json
+  content: |-
+    {
+      "date": "1971-10-10",
+      "status": "missed",
+      "value": 9783.658320646924,
+      "note": "string",
+      "mood": 2
+    }
+  $type: |-
+    {
+      "type": "object",
+      "properties": {
+        "date": {
+          "type": "string",
+          "format": "date"
+        },
+        "status": {
+          "type": "string",
+          "enum": [
+            "completed",
+            "skipped",
+            "missed"
+          ],
+          "description": "Completion status of a check-in period."
+        },
+        "value": {
+          "type": "number",
+          "format": "double"
+        },
+        "note": {
+          "type": "string",
+          "maxLength": 1000
+        },
+        "mood": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 5,
+          "format": "int32"
+        }
+      },
+      "required": [
+        "date",
+        "status"
+      ]
+    }
+examples: ./.resources/Record a check-in.resources/examples
+order: 3000

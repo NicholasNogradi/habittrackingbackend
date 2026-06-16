@@ -1,0 +1,27 @@
+$kind: http-request
+description: |
+  Deletes the habit and all associated check-ins, streaks, and reminders.
+  This operation is **irreversible**.
+url: "{{baseUrl}}/habits/:habitId"
+method: DELETE
+headers:
+  Accept: application/problem+json
+pathVariables:
+  - key: habitId
+    value: 3fa85f64-5717-4562-b3fc-2c963f66afa6
+    description: Unique identifier of the habit.
+    $type: |-
+      {
+        "type": "object",
+        "properties": {
+          "value": {
+            "type": "string",
+            "format": "uuid"
+          }
+        },
+        "required": [
+          "value"
+        ]
+      }
+examples: ./.resources/Delete a habit.resources/examples
+order: 7000

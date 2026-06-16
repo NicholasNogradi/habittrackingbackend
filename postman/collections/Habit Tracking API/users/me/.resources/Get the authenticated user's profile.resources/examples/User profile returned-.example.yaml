@@ -1,0 +1,77 @@
+$kind: http-example
+name: User profile returned.
+request:
+  url: "{{baseUrl}}/users/me"
+  method: GET
+  headers:
+    - key: Accept
+      value: application/json
+    - key: Authorization
+      value: Bearer <token>
+      description: "Added as a part of security scheme: bearer"
+response:
+  statusCode: 200
+  statusText: OK
+  headers:
+    Content-Type: application/json
+    ETag: ""
+    Last-Modified: ""
+  body:
+    type: json
+    content: |-
+      {
+        "id": "99b0dc91-d79b-9c2a-32cb-2f300ec6e3c6",
+        "email": "ZNNg0g5sTec@jSXt.iu",
+        "displayName": "string",
+        "createdAt": "1988-07-16T19:14:06.943Z",
+        "updatedAt": "1956-12-17T19:18:08.760Z",
+        "avatarUrl": "http://TLxTppqVIPCRlX.eybaA.EK-cSMDWYzAn3STDGwfM0T2ngNxd4p9P1pM2BMum95o",
+        "timezone": "America/New_York",
+        "locale": "en-US",
+        "weekStartDay": "monday"
+      }
+    $type: |-
+      {
+        "type": "object",
+        "properties": {
+          "email": {
+            "type": "string",
+            "format": "email"
+          },
+          "displayName": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 100
+          },
+          "avatarUrl": {
+            "type": "string",
+            "format": "uri"
+          },
+          "timezone": {
+            "type": "string",
+            "example": "America/New_York",
+            "description": "IANA timezone string."
+          },
+          "locale": {
+            "type": "string",
+            "example": "en-US",
+            "description": "BCP 47 language tag."
+          },
+          "weekStartDay": {
+            "type": "string",
+            "enum": [
+              "monday",
+              "sunday"
+            ],
+            "description": "First day of the user's calendar week."
+          }
+        },
+        "required": [
+          "id",
+          "email",
+          "displayName",
+          "createdAt",
+          "updatedAt"
+        ]
+      }
+order: 1000

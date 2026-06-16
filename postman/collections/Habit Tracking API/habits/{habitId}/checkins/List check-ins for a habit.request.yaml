@@ -1,0 +1,89 @@
+$kind: http-request
+url: "{{baseUrl}}/habits/:habitId/checkins?limit=20&cursor=eyJpZCI6IjEyMyIsInRzIjoiMjAyNS0wMS0wMVQwMDowMDowMFoifQ==&from=2025-01-01&to=2025-03-31&status=completed"
+method: GET
+headers:
+  Accept: application/json
+queryParams:
+  - key: limit
+    value: "20"
+    description: Maximum number of items to return per page (1–100).
+    $type: |-
+      {
+        "type": "object",
+        "properties": {
+          "value": {
+            "type": "integer",
+            "format": "int32",
+            "default": 20,
+            "minimum": 1,
+            "maximum": 100
+          }
+        }
+      }
+  - key: cursor
+    value: eyJpZCI6IjEyMyIsInRzIjoiMjAyNS0wMS0wMVQwMDowMDowMFoifQ==
+    description: Opaque pagination cursor returned by the previous page response.
+    $type: string
+  - key: from
+    value: 2025-01-01
+    description: Filter check-ins on or after this date (ISO 8601 date).
+    $type: |-
+      {
+        "type": "object",
+        "properties": {
+          "value": {
+            "type": "string",
+            "format": "date"
+          }
+        }
+      }
+  - key: to
+    value: 2025-03-31
+    description: Filter check-ins on or before this date (ISO 8601 date).
+    $type: |-
+      {
+        "type": "object",
+        "properties": {
+          "value": {
+            "type": "string",
+            "format": "date"
+          }
+        }
+      }
+  - key: status
+    value: completed
+    description: Filter by completion status.
+    $type: |-
+      {
+        "type": "object",
+        "properties": {
+          "value": {
+            "description": "Completion status of a check-in period.",
+            "type": "string",
+            "enum": [
+              "completed",
+              "skipped",
+              "missed"
+            ]
+          }
+        }
+      }
+pathVariables:
+  - key: habitId
+    value: 3354d98d-870d-4f01-8731-9d15993fc0f3
+    description: Unique identifier of the habit.
+    $type: |-
+      {
+        "type": "object",
+        "properties": {
+          "value": {
+            "type": "string",
+            "format": "uuid"
+          }
+        },
+        "required": [
+          "value"
+        ]
+      }
+examples: ./.resources/List check-ins for a habit.resources/examples
+order: 2000

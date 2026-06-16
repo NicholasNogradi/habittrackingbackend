@@ -1,0 +1,27 @@
+$kind: http-request
+description: |
+  Deletes the category. Habits assigned to this category will have
+  their `categoryId` set to `null`.
+url: "{{baseUrl}}/categories/:categoryId"
+method: DELETE
+headers:
+  Accept: application/problem+json
+pathVariables:
+  - key: categoryId
+    value: 1c3b4d12-89ab-4def-0123-456789abcdef
+    description: Unique identifier of the category.
+    $type: |-
+      {
+        "type": "object",
+        "properties": {
+          "value": {
+            "type": "string",
+            "format": "uuid"
+          }
+        },
+        "required": [
+          "value"
+        ]
+      }
+examples: ./.resources/Delete a category.resources/examples
+order: 3000

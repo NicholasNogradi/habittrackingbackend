@@ -1,0 +1,43 @@
+$kind: http-request
+description: |
+  Returns aggregate statistics across all habits: total check-ins,
+  completion rate, longest and current streaks, and active habit count.
+url: "{{baseUrl}}/analytics/summary?from=1968-02-14&to=1968-02-14"
+method: GET
+headers:
+  Accept: application/json
+queryParams:
+  - key: from
+    value: 1968-02-14
+    description: Start of the analysis window (ISO 8601 date).
+    $type: |-
+      {
+        "type": "object",
+        "properties": {
+          "value": {
+            "type": "string",
+            "format": "date"
+          }
+        },
+        "required": [
+          "value"
+        ]
+      }
+  - key: to
+    value: 1968-02-14
+    description: End of the analysis window (ISO 8601 date, inclusive).
+    $type: |-
+      {
+        "type": "object",
+        "properties": {
+          "value": {
+            "type": "string",
+            "format": "date"
+          }
+        },
+        "required": [
+          "value"
+        ]
+      }
+examples: ./.resources/Get overall analytics summary for the authenticated user.resources/examples
+order: 1000

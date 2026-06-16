@@ -1,0 +1,20 @@
+$kind: http-example
+name: Habit deleted.
+request:
+  url: "{{baseUrl}}/habits/:habitId"
+  method: DELETE
+  headers:
+    - key: Authorization
+      value: Bearer <token>
+      description: "Added as a part of security scheme: bearer"
+  pathVariables:
+    - key: habitId
+      value: 3fa85f64-5717-4562-b3fc-2c963f66afa6
+      description: Unique identifier of the habit.
+response:
+  statusCode: 204
+  statusText: No Content
+  body:
+    type: text
+    content: ""
+order: 1000

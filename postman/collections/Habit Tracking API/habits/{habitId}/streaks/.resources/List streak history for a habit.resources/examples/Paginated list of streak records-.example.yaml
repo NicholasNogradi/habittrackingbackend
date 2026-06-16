@@ -1,0 +1,145 @@
+$kind: http-example
+name: Paginated list of streak records.
+request:
+  url: "{{baseUrl}}/habits/:habitId/streaks?limit=20&cursor=eyJpZCI6IjEyMyIsInRzIjoiMjAyNS0wMS0wMVQwMDowMDowMFoifQ=="
+  method: GET
+  headers:
+    - key: Accept
+      value: application/json
+    - key: Authorization
+      value: Bearer <token>
+      description: "Added as a part of security scheme: bearer"
+  queryParams:
+    - key: limit
+      value: "20"
+      description: Maximum number of items to return per page (1–100).
+    - key: cursor
+      value: eyJpZCI6IjEyMyIsInRzIjoiMjAyNS0wMS0wMVQwMDowMDowMFoifQ==
+      description: Opaque pagination cursor returned by the previous page response.
+  pathVariables:
+    - key: habitId
+      value: 3fa85f64-5717-4562-b3fc-2c963f66afa6
+      description: Unique identifier of the habit.
+response:
+  statusCode: 200
+  statusText: OK
+  headers:
+    Content-Type: application/json
+  body:
+    type: json
+    content: |-
+      {
+        "pagination": {
+          "totalCount": 4941,
+          "hasMore": false,
+          "nextCursor": "string",
+          "prevCursor": "string"
+        },
+        "data": [
+          {
+            "id": "83dd82d3-18b9-8de1-1081-7e3767e54a22",
+            "habitId": "2e11c749-54b7-f3f1-d179-e99f734ff985",
+            "startDate": "1982-03-20",
+            "length": 2423,
+            "isActive": true,
+            "endDate": "1953-04-25"
+          },
+          {
+            "id": "2127bc86-9055-366d-829f-1cca3021a478",
+            "habitId": "df5a49b3-fdb2-26fd-9eda-4c2ca15140d3",
+            "startDate": "1982-08-10",
+            "length": 3669,
+            "isActive": false,
+            "endDate": "2023-12-27"
+          }
+        ]
+      }
+    $type: |-
+      {
+        "allOf": [
+          {
+            "type": "object",
+            "properties": {
+              "pagination": {
+                "type": "object",
+                "properties": {
+                  "totalCount": {
+                    "type": "integer",
+                    "description": "Total number of items matching the query.",
+                    "format": "int64"
+                  },
+                  "hasMore": {
+                    "type": "boolean",
+                    "description": "Whether additional pages are available."
+                  },
+                  "nextCursor": {
+                    "type": "string",
+                    "description": "Opaque cursor to pass as `cursor` in the next request."
+                  },
+                  "prevCursor": {
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "totalCount",
+                  "hasMore"
+                ]
+              }
+            },
+            "required": [
+              "pagination"
+            ]
+          },
+          {
+            "type": "object",
+            "properties": {
+              "data": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "id": {
+                      "type": "string",
+                      "format": "uuid"
+                    },
+                    "habitId": {
+                      "type": "string",
+                      "format": "uuid"
+                    },
+                    "startDate": {
+                      "type": "string",
+                      "description": "First day of the streak.",
+                      "format": "date"
+                    },
+                    "endDate": {
+                      "type": "string",
+                      "description": "Last day of the streak (null if still active).",
+                      "format": "date"
+                    },
+                    "length": {
+                      "type": "integer",
+                      "description": "Number of consecutive completed periods.",
+                      "format": "int32"
+                    },
+                    "isActive": {
+                      "type": "boolean",
+                      "description": "Whether the streak is currently ongoing."
+                    }
+                  },
+                  "required": [
+                    "id",
+                    "habitId",
+                    "startDate",
+                    "length",
+                    "isActive"
+                  ]
+                }
+              }
+            },
+            "required": [
+              "data"
+            ]
+          }
+        ]
+      }
+order: 1000

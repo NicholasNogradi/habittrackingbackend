@@ -1,0 +1,7 @@
+$kind: http-request
+url: "{{baseUrl}}/users/me"
+method: GET
+headers:
+  Accept: application/json
+examples: ./.resources/Get the authenticated user's profile.resources/examples
+order: 1000

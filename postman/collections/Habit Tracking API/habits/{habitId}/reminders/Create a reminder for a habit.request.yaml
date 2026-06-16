@@ -1,0 +1,91 @@
+$kind: http-request
+url: "{{baseUrl}}/habits/:habitId/reminders"
+method: POST
+headers:
+  - key: Idempotency-Key
+    value: 550e8400-e29b-41d4-a716-446655440000
+    description: |
+      Client-generated UUID to make the request idempotent.
+      The same key within 24 hours returns the original response.
+    $type: |-
+      {
+        "type": "object",
+        "properties": {
+          "value": {
+            "type": "string",
+            "format": "uuid"
+          }
+        }
+      }
+  - key: Content-Type
+    value: application/json
+  - key: Accept
+    value: application/json
+pathVariables:
+  - key: habitId
+    value: 3fa85f64-5717-4562-b3fc-2c963f66afa6
+    description: Unique identifier of the habit.
+    $type: |-
+      {
+        "type": "object",
+        "properties": {
+          "value": {
+            "type": "string",
+            "format": "uuid"
+          }
+        },
+        "required": [
+          "value"
+        ]
+      }
+body:
+  type: json
+  content: |-
+    {
+      "time": "04:56",
+      "channel": "sms",
+      "daysOfWeek": [
+        "sunday",
+        "tuesday"
+      ],
+      "message": "string",
+      "isEnabled": true
+    }
+  $type: |-
+    {
+      "type": "object",
+      "properties": {
+        "time": {
+          "type": "string",
+          "pattern": "^([01]\\d|2[0-3]):[0-5]\\d$"
+        },
+        "daysOfWeek": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "channel": {
+          "type": "string",
+          "enum": [
+            "push",
+            "email",
+            "sms"
+          ],
+          "description": "Delivery channel for the reminder."
+        },
+        "message": {
+          "type": "string",
+          "maxLength": 200
+        },
+        "isEnabled": {
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "time",
+        "channel"
+      ]
+    }
+examples: ./.resources/Create a reminder for a habit.resources/examples
+order: 3000

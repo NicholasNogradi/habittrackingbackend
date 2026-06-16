@@ -1,0 +1,11 @@
+$kind: http-request
+description: |
+  Permanently deletes the account and all associated data.
+  This operation is **irreversible**. A 30-day grace period applies;
+  the account can be restored by contacting support within that window.
+url: "{{baseUrl}}/users/me"
+method: DELETE
+headers:
+  Accept: application/problem+json
+examples: ./.resources/Delete (close) the authenticated user's account.resources/examples
+order: 3000

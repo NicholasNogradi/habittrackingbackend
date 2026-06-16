@@ -1,0 +1,68 @@
+$kind: http-example
+name: Current streak returned.
+request:
+  url: "{{baseUrl}}/habits/:habitId/streaks/current"
+  method: GET
+  headers:
+    - key: Accept
+      value: application/json
+    - key: Authorization
+      value: Bearer <token>
+      description: "Added as a part of security scheme: bearer"
+  pathVariables:
+    - key: habitId
+      value: 3fa85f64-5717-4562-b3fc-2c963f66afa6
+      description: Unique identifier of the habit.
+response:
+  statusCode: 200
+  statusText: OK
+  headers:
+    Content-Type: application/json
+  body:
+    type: json
+    content: |-
+      {
+        "id": "44164881-0f6f-21d7-a163-788f0dec26f4",
+        "habitId": "f667d80e-899d-346c-7e85-28ef594919d2",
+        "startDate": "1960-04-29",
+        "length": 3171,
+        "isActive": true,
+        "endDate": "1986-02-11"
+      }
+    $type: |-
+      {
+        "type": "object",
+        "properties": {
+          "habitId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "startDate": {
+            "type": "string",
+            "description": "First day of the streak.",
+            "format": "date"
+          },
+          "endDate": {
+            "type": "string",
+            "description": "Last day of the streak (null if still active).",
+            "format": "date"
+          },
+          "length": {
+            "type": "integer",
+            "description": "Number of consecutive completed periods.",
+            "format": "int32"
+          },
+          "isActive": {
+            "type": "boolean",
+            "description": "Whether the streak is currently ongoing."
+          }
+        },
+        "required": [
+          "id",
+          "habitId",
+          "startDate",
+          "length",
+          "isActive"
+        ]
+      }
+order: 1000

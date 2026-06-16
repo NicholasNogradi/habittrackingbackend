@@ -1,0 +1,186 @@
+$kind: http-example
+name: Paginated list of check-ins.
+request:
+  url: "{{baseUrl}}/habits/:habitId/checkins?limit=20&cursor=eyJpZCI6IjEyMyIsInRzIjoiMjAyNS0wMS0wMVQwMDowMDowMFoifQ==&from=2025-01-01&to=2025-03-31&status=completed"
+  method: GET
+  headers:
+    - key: Accept
+      value: application/json
+    - key: Authorization
+      value: Bearer <token>
+      description: "Added as a part of security scheme: bearer"
+  queryParams:
+    - key: limit
+      value: "20"
+      description: Maximum number of items to return per page (1–100).
+    - key: cursor
+      value: eyJpZCI6IjEyMyIsInRzIjoiMjAyNS0wMS0wMVQwMDowMDowMFoifQ==
+      description: Opaque pagination cursor returned by the previous page response.
+    - key: from
+      value: 2025-01-01
+      description: Filter check-ins on or after this date (ISO 8601 date).
+    - key: to
+      value: 2025-03-31
+      description: Filter check-ins on or before this date (ISO 8601 date).
+    - key: status
+      value: completed
+      description: Filter by completion status.
+  pathVariables:
+    - key: habitId
+      value: 3fa85f64-5717-4562-b3fc-2c963f66afa6
+      description: Unique identifier of the habit.
+response:
+  statusCode: 200
+  statusText: OK
+  headers:
+    Content-Type: application/json
+    X-RateLimit-Limit: ""
+    X-RateLimit-Remaining: ""
+    X-RateLimit-Reset: ""
+  body:
+    type: json
+    content: |-
+      {
+        "pagination": {
+          "totalCount": 9898,
+          "hasMore": false,
+          "nextCursor": "string",
+          "prevCursor": "string"
+        },
+        "data": [
+          {
+            "id": "c84c1256-bdd6-cb5d-5667-ab1b1f3eecf6",
+            "habitId": "e85f4dc2-f71a-8bbf-bb70-7aae693419fb",
+            "date": "2025-06-04",
+            "status": "missed",
+            "createdAt": "1965-02-08T18:44:04.283Z",
+            "updatedAt": "1949-01-17T16:05:42.815Z",
+            "value": 35,
+            "note": "string",
+            "mood": 2
+          },
+          {
+            "id": "c369e7c3-3f4e-1520-a2cf-cbe059e32126",
+            "habitId": "d2a3963a-8e06-6790-172e-f0f57df9db6c",
+            "date": "2025-06-04",
+            "status": "skipped",
+            "createdAt": "2003-11-10T07:05:49.493Z",
+            "updatedAt": "1986-11-12T05:38:41.571Z",
+            "value": 35,
+            "note": "string",
+            "mood": 3
+          }
+        ]
+      }
+    $type: |-
+      {
+        "allOf": [
+          {
+            "type": "object",
+            "properties": {
+              "pagination": {
+                "type": "object",
+                "properties": {
+                  "totalCount": {
+                    "type": "integer",
+                    "description": "Total number of items matching the query.",
+                    "format": "int64"
+                  },
+                  "hasMore": {
+                    "type": "boolean",
+                    "description": "Whether additional pages are available."
+                  },
+                  "nextCursor": {
+                    "type": "string",
+                    "description": "Opaque cursor to pass as `cursor` in the next request."
+                  },
+                  "prevCursor": {
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "totalCount",
+                  "hasMore"
+                ]
+              }
+            },
+            "required": [
+              "pagination"
+            ]
+          },
+          {
+            "type": "object",
+            "properties": {
+              "data": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "id": {
+                      "type": "string",
+                      "format": "uuid"
+                    },
+                    "habitId": {
+                      "type": "string",
+                      "format": "uuid"
+                    },
+                    "date": {
+                      "type": "string",
+                      "example": "2025-06-04",
+                      "description": "Calendar date the check-in applies to.",
+                      "format": "date"
+                    },
+                    "status": {
+                      "type": "string",
+                      "enum": [
+                        "completed",
+                        "skipped",
+                        "missed"
+                      ],
+                      "description": "Completion status of a check-in period."
+                    },
+                    "value": {
+                      "type": "number",
+                      "example": 35,
+                      "description": "Quantitative value recorded (e.g. 35 minutes run).",
+                      "format": "double"
+                    },
+                    "note": {
+                      "type": "string",
+                      "maxLength": 1000,
+                      "description": "Free-text note for this check-in."
+                    },
+                    "mood": {
+                      "type": "integer",
+                      "minimum": 1,
+                      "maximum": 5,
+                      "description": "Optional mood rating (1 = very poor, 5 = excellent).",
+                      "format": "int32"
+                    },
+                    "createdAt": {
+                      "type": "string",
+                      "format": "date-time"
+                    },
+                    "updatedAt": {
+                      "type": "string",
+                      "format": "date-time"
+                    }
+                  },
+                  "required": [
+                    "id",
+                    "habitId",
+                    "date",
+                    "status",
+                    "createdAt",
+                    "updatedAt"
+                  ]
+                }
+              }
+            },
+            "required": [
+              "data"
+            ]
+          }
+        ]
+      }
+order: 1000

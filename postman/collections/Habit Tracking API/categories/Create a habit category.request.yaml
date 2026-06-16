@@ -1,0 +1,60 @@
+$kind: http-request
+url: "{{baseUrl}}/categories"
+method: POST
+headers:
+  - key: Idempotency-Key
+    value: 550e8400-e29b-41d4-a716-446655440000
+    description: |
+      Client-generated UUID to make the request idempotent.
+      The same key within 24 hours returns the original response.
+    $type: |-
+      {
+        "type": "object",
+        "properties": {
+          "value": {
+            "type": "string",
+            "format": "uuid"
+          }
+        }
+      }
+  - key: Content-Type
+    value: application/json
+  - key: Accept
+    value: application/json
+body:
+  type: json
+  content: |-
+    {
+      "name": "Health & Fitness",
+      "description": "string",
+      "color": "#EF3aBD",
+      "icon": "string"
+    }
+  $type: |-
+    {
+      "type": "object",
+      "properties": {
+        "name": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 80
+        },
+        "description": {
+          "type": "string",
+          "maxLength": 500
+        },
+        "color": {
+          "type": "string",
+          "pattern": "^#[0-9A-Fa-f]{6}$"
+        },
+        "icon": {
+          "type": "string",
+          "maxLength": 50
+        }
+      },
+      "required": [
+        "name"
+      ]
+    }
+examples: ./.resources/Create a habit category.resources/examples
+order: 3000

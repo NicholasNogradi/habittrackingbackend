@@ -1,0 +1,177 @@
+$kind: http-example
+name: Habit replaced.
+request:
+  url: "{{baseUrl}}/habits/:habitId"
+  method: PUT
+  headers:
+    - key: If-Match
+      value: '"d41d8cd98f00b204e9800998ecf8427e"'
+      description: |
+        ETag value for optimistic concurrency control. If the resource has
+        changed since the ETag was retrieved, the server returns **412**.
+    - key: Content-Type
+      value: application/json
+    - key: Accept
+      value: application/json
+    - key: Authorization
+      value: Bearer <token>
+      description: "Added as a part of security scheme: bearer"
+  pathVariables:
+    - key: habitId
+      value: 3fa85f64-5717-4562-b3fc-2c963f66afa6
+      description: Unique identifier of the habit.
+  body:
+    type: json
+    content: |-
+      {
+        "name": "string",
+        "frequency": "daily",
+        "description": "string",
+        "categoryId": "20791657-041b-3f57-9a5f-d0a965a9025a",
+        "color": "#C492Ab",
+        "icon": "string",
+        "targetDays": [
+          "sunday",
+          "friday"
+        ],
+        "targetCount": 1,
+        "unit": "string",
+        "targetValue": 6080.998707762963,
+        "startDate": "1965-07-26",
+        "endDate": "2024-01-16"
+      }
+response:
+  statusCode: 200
+  statusText: OK
+  headers:
+    Content-Type: application/json
+    ETag: ""
+  body:
+    type: json
+    content: |-
+      {
+        "id": "44cb492e-65d8-801f-4793-883fd46774a3",
+        "name": "Morning Run",
+        "frequency": "daily",
+        "status": "active",
+        "targetCount": 1,
+        "currentStreak": 3009,
+        "longestStreak": 7438,
+        "createdAt": "1981-06-03T08:37:09.009Z",
+        "updatedAt": "1994-05-25T06:48:31.276Z",
+        "description": "string",
+        "categoryId": "d2e8fd40-c48e-ccf4-b4fe-8849b509de1b",
+        "color": "#2FdfC9",
+        "icon": "string",
+        "targetDays": [
+          "monday",
+          "wednesday",
+          "friday"
+        ],
+        "unit": "minutes",
+        "targetValue": 30,
+        "startDate": "2025-01-01",
+        "endDate": "1959-10-07",
+        "completionRate": 0.87
+      }
+    $type: |-
+      {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 200,
+            "example": "Morning Run"
+          },
+          "description": {
+            "type": "string",
+            "maxLength": 1000
+          },
+          "categoryId": {
+            "type": "string",
+            "description": "Reference to the parent category.",
+            "format": "uuid"
+          },
+          "color": {
+            "type": "string",
+            "pattern": "^#[0-9A-Fa-f]{6}$"
+          },
+          "icon": {
+            "type": "string",
+            "maxLength": 50
+          },
+          "frequency": {
+            "type": "string",
+            "enum": [
+              "daily",
+              "weekly",
+              "custom"
+            ],
+            "description": "How often the habit should be completed."
+          },
+          "targetDays": {
+            "type": "array",
+            "example": [
+              "monday",
+              "wednesday",
+              "friday"
+            ],
+            "description": "Required when `frequency` is `weekly` or `custom`.",
+            "items": {
+              "type": "string"
+            }
+          },
+          "targetCount": {
+            "type": "integer",
+            "minimum": 1,
+            "example": 1,
+            "description": "Number of completions expected per period.",
+            "format": "int32"
+          },
+          "unit": {
+            "type": "string",
+            "maxLength": 50,
+            "example": "minutes",
+            "description": "Measurement unit (e.g. \"minutes\", \"glasses\", \"pages\")."
+          },
+          "targetValue": {
+            "type": "number",
+            "example": 30,
+            "description": "Target quantitative value per check-in (e.g. 30 minutes).",
+            "format": "double"
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "active",
+              "paused",
+              "archived"
+            ],
+            "description": "Lifecycle status of a habit."
+          },
+          "startDate": {
+            "type": "string",
+            "example": "2025-01-01",
+            "description": "Date the habit tracking begins.",
+            "format": "date"
+          },
+          "endDate": {
+            "type": "string",
+            "description": "Optional date the habit tracking ends.",
+            "format": "date"
+          }
+        },
+        "required": [
+          "id",
+          "name",
+          "frequency",
+          "status",
+          "targetCount",
+          "currentStreak",
+          "longestStreak",
+          "createdAt",
+          "updatedAt"
+        ]
+      }
+order: 1000

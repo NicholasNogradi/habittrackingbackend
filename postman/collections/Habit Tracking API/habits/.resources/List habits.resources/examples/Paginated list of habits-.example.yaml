@@ -1,0 +1,280 @@
+$kind: http-example
+name: Paginated list of habits.
+request:
+  url: "{{baseUrl}}/habits?limit=20&cursor=eyJpZCI6IjEyMyIsInRzIjoiMjAyNS0wMS0wMVQwMDowMDowMFoifQ==&categoryId=caf5bb04-4900-a698-218c-ecf5619a92a7&status=active&frequency=daily&sort=-createdAt"
+  method: GET
+  headers:
+    - key: Accept
+      value: application/json
+    - key: Authorization
+      value: Bearer <token>
+      description: "Added as a part of security scheme: bearer"
+  queryParams:
+    - key: limit
+      value: "20"
+      description: Maximum number of items to return per page (1–100).
+    - key: cursor
+      value: eyJpZCI6IjEyMyIsInRzIjoiMjAyNS0wMS0wMVQwMDowMDowMFoifQ==
+      description: Opaque pagination cursor returned by the previous page response.
+    - key: categoryId
+      value: caf5bb04-4900-a698-218c-ecf5619a92a7
+      description: Filter habits by category.
+    - key: status
+      value: active
+      description: Filter by habit status.
+    - key: frequency
+      value: daily
+      description: Filter by recurrence frequency.
+    - key: sort
+      value: -createdAt
+      description: Field to sort by (prefix with `-` for descending).
+response:
+  statusCode: 200
+  statusText: OK
+  headers:
+    Content-Type: application/json
+    X-RateLimit-Limit: ""
+    X-RateLimit-Remaining: ""
+    X-RateLimit-Reset: ""
+  body:
+    type: json
+    content: |-
+      {
+        "pagination": {
+          "totalCount": 7192,
+          "hasMore": true,
+          "nextCursor": "string",
+          "prevCursor": "string"
+        },
+        "data": [
+          {
+            "id": "aad12585-7094-cc60-dae1-273ff44e3d4d",
+            "name": "Morning Run",
+            "frequency": "custom",
+            "status": "paused",
+            "targetCount": 1,
+            "currentStreak": 9931,
+            "longestStreak": 6128,
+            "createdAt": "1984-11-13T03:31:42.561Z",
+            "updatedAt": "1983-09-08T01:27:55.149Z",
+            "description": "string",
+            "categoryId": "9d56cc64-ad7a-4dae-90e8-4006e82efc52",
+            "color": "#86aeBF",
+            "icon": "string",
+            "targetDays": [
+              "monday",
+              "wednesday",
+              "friday"
+            ],
+            "unit": "minutes",
+            "targetValue": 30,
+            "startDate": "2025-01-01",
+            "endDate": "2017-11-04",
+            "completionRate": 0.87
+          },
+          {
+            "id": "1d57b6a9-f1cb-b4b4-c588-a941c18e853b",
+            "name": "Morning Run",
+            "frequency": "weekly",
+            "status": "paused",
+            "targetCount": 1,
+            "currentStreak": 5228,
+            "longestStreak": 7479,
+            "createdAt": "1979-08-29T23:12:39.512Z",
+            "updatedAt": "1952-03-30T09:32:24.071Z",
+            "description": "string",
+            "categoryId": "c7302704-279e-09f7-6987-4b00d12fc9d1",
+            "color": "#9BB0dD",
+            "icon": "string",
+            "targetDays": [
+              "monday",
+              "wednesday",
+              "friday"
+            ],
+            "unit": "minutes",
+            "targetValue": 30,
+            "startDate": "2025-01-01",
+            "endDate": "1965-07-02",
+            "completionRate": 0.87
+          }
+        ]
+      }
+    $type: |-
+      {
+        "allOf": [
+          {
+            "type": "object",
+            "properties": {
+              "pagination": {
+                "type": "object",
+                "properties": {
+                  "totalCount": {
+                    "type": "integer",
+                    "description": "Total number of items matching the query.",
+                    "format": "int64"
+                  },
+                  "hasMore": {
+                    "type": "boolean",
+                    "description": "Whether additional pages are available."
+                  },
+                  "nextCursor": {
+                    "type": "string",
+                    "description": "Opaque cursor to pass as `cursor` in the next request."
+                  },
+                  "prevCursor": {
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "totalCount",
+                  "hasMore"
+                ]
+              }
+            },
+            "required": [
+              "pagination"
+            ]
+          },
+          {
+            "type": "object",
+            "properties": {
+              "data": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "id": {
+                      "type": "string",
+                      "format": "uuid"
+                    },
+                    "name": {
+                      "type": "string",
+                      "minLength": 1,
+                      "maxLength": 200,
+                      "example": "Morning Run"
+                    },
+                    "description": {
+                      "type": "string",
+                      "maxLength": 1000
+                    },
+                    "categoryId": {
+                      "type": "string",
+                      "description": "Reference to the parent category.",
+                      "format": "uuid"
+                    },
+                    "color": {
+                      "type": "string",
+                      "pattern": "^#[0-9A-Fa-f]{6}$"
+                    },
+                    "icon": {
+                      "type": "string",
+                      "maxLength": 50
+                    },
+                    "frequency": {
+                      "type": "string",
+                      "enum": [
+                        "daily",
+                        "weekly",
+                        "custom"
+                      ],
+                      "description": "How often the habit should be completed."
+                    },
+                    "targetDays": {
+                      "type": "array",
+                      "example": [
+                        "monday",
+                        "wednesday",
+                        "friday"
+                      ],
+                      "description": "Required when `frequency` is `weekly` or `custom`.",
+                      "items": {
+                        "type": "string"
+                      }
+                    },
+                    "targetCount": {
+                      "type": "integer",
+                      "minimum": 1,
+                      "example": 1,
+                      "description": "Number of completions expected per period.",
+                      "format": "int32"
+                    },
+                    "unit": {
+                      "type": "string",
+                      "maxLength": 50,
+                      "example": "minutes",
+                      "description": "Measurement unit (e.g. \"minutes\", \"glasses\", \"pages\")."
+                    },
+                    "targetValue": {
+                      "type": "number",
+                      "example": 30,
+                      "description": "Target quantitative value per check-in (e.g. 30 minutes).",
+                      "format": "double"
+                    },
+                    "status": {
+                      "type": "string",
+                      "enum": [
+                        "active",
+                        "paused",
+                        "archived"
+                      ],
+                      "description": "Lifecycle status of a habit."
+                    },
+                    "startDate": {
+                      "type": "string",
+                      "example": "2025-01-01",
+                      "description": "Date the habit tracking begins.",
+                      "format": "date"
+                    },
+                    "endDate": {
+                      "type": "string",
+                      "description": "Optional date the habit tracking ends.",
+                      "format": "date"
+                    },
+                    "currentStreak": {
+                      "type": "integer",
+                      "description": "Length of the currently active streak (in periods).",
+                      "format": "int32"
+                    },
+                    "longestStreak": {
+                      "type": "integer",
+                      "description": "Longest ever streak for this habit.",
+                      "format": "int32"
+                    },
+                    "completionRate": {
+                      "type": "number",
+                      "minimum": 0,
+                      "maximum": 1,
+                      "example": 0.87,
+                      "description": "Ratio of completed periods to total elapsed periods.",
+                      "format": "double"
+                    },
+                    "createdAt": {
+                      "type": "string",
+                      "format": "date-time"
+                    },
+                    "updatedAt": {
+                      "type": "string",
+                      "format": "date-time"
+                    }
+                  },
+                  "required": [
+                    "id",
+                    "name",
+                    "frequency",
+                    "status",
+                    "targetCount",
+                    "currentStreak",
+                    "longestStreak",
+                    "createdAt",
+                    "updatedAt"
+                  ]
+                }
+              }
+            },
+            "required": [
+              "data"
+            ]
+          }
+        ]
+      }
+order: 1000

@@ -1,0 +1,85 @@
+$kind: http-example
+name: Category updated.
+request:
+  url: "{{baseUrl}}/categories/:categoryId"
+  method: PATCH
+  headers:
+    - key: If-Match
+      value: '"d41d8cd98f00b204e9800998ecf8427e"'
+      description: |
+        ETag value for optimistic concurrency control. If the resource has
+        changed since the ETag was retrieved, the server returns **412**.
+    - key: Content-Type
+      value: application/json
+    - key: Accept
+      value: application/json
+    - key: Authorization
+      value: Bearer <token>
+      description: "Added as a part of security scheme: bearer"
+  pathVariables:
+    - key: categoryId
+      value: 1c3b4d12-89ab-4def-0123-456789abcdef
+      description: Unique identifier of the category.
+  body:
+    type: json
+    content: |-
+      {
+        "name": "string",
+        "description": "string",
+        "color": "#109Ab7",
+        "icon": "string"
+      }
+response:
+  statusCode: 200
+  statusText: OK
+  headers:
+    Content-Type: application/json
+    ETag: ""
+  body:
+    type: json
+    content: |-
+      {
+        "id": "a056d6d4-e7a3-bc4a-6a35-7a076249b06c",
+        "name": "Health & Fitness",
+        "createdAt": "1951-09-16T10:02:19.675Z",
+        "updatedAt": "2009-05-01T01:46:10.921Z",
+        "description": "string",
+        "color": "#4CAF50",
+        "icon": "dumbbell",
+        "habitCount": 1020
+      }
+    $type: |-
+      {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 80,
+            "example": "Health & Fitness"
+          },
+          "description": {
+            "type": "string",
+            "maxLength": 500
+          },
+          "color": {
+            "type": "string",
+            "pattern": "^#[0-9A-Fa-f]{6}$",
+            "example": "#4CAF50",
+            "description": "Hex colour code for UI theming."
+          },
+          "icon": {
+            "type": "string",
+            "maxLength": 50,
+            "example": "dumbbell",
+            "description": "Icon identifier (e.g. icon library slug)."
+          }
+        },
+        "required": [
+          "id",
+          "name",
+          "createdAt",
+          "updatedAt"
+        ]
+      }
+order: 1000

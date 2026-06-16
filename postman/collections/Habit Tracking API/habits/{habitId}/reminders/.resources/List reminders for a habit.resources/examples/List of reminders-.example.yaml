@@ -1,0 +1,102 @@
+$kind: http-example
+name: List of reminders.
+request:
+  url: "{{baseUrl}}/habits/:habitId/reminders"
+  method: GET
+  headers:
+    - key: Accept
+      value: application/json
+    - key: Authorization
+      value: Bearer <token>
+      description: "Added as a part of security scheme: bearer"
+  pathVariables:
+    - key: habitId
+      value: 3fa85f64-5717-4562-b3fc-2c963f66afa6
+      description: Unique identifier of the habit.
+response:
+  statusCode: 200
+  statusText: OK
+  headers:
+    Content-Type: application/json
+  body:
+    type: json
+    content: |-
+      [
+        {
+          "id": "019d2ee0-982f-bab7-acc3-bf669f640122",
+          "habitId": "17f33a66-400f-6431-88dc-c254bfadcd2f",
+          "time": "07:30",
+          "channel": "push",
+          "isEnabled": true,
+          "createdAt": "2018-03-11T09:04:27.404Z",
+          "updatedAt": "2010-02-23T12:38:36.418Z",
+          "daysOfWeek": [
+            "thursday",
+            "friday"
+          ],
+          "message": "string"
+        },
+        {
+          "id": "613a2a53-142f-35c7-3ece-53889942f365",
+          "habitId": "90408511-4a44-f0d4-c188-9b1f2c487f9b",
+          "time": "07:30",
+          "channel": "push",
+          "isEnabled": true,
+          "createdAt": "1962-06-29T01:22:34.306Z",
+          "updatedAt": "1970-08-30T03:05:51.806Z",
+          "daysOfWeek": [
+            "monday",
+            "sunday"
+          ],
+          "message": "string"
+        }
+      ]
+    $type: |-
+      {
+        "type": "array",
+        "items": {
+          "type": "object",
+          "properties": {
+            "time": {
+              "type": "string",
+              "pattern": "^([01]\\d|2[0-3]):[0-5]\\d$",
+              "example": "07:30",
+              "description": "Local time of day to fire the reminder (HH:mm, 24-hour)."
+            },
+            "daysOfWeek": {
+              "type": "array",
+              "description": "Days on which this reminder fires. Omit for daily reminders.",
+              "items": {
+                "type": "string"
+              }
+            },
+            "channel": {
+              "type": "string",
+              "enum": [
+                "push",
+                "email",
+                "sms"
+              ],
+              "description": "Delivery channel for the reminder."
+            },
+            "message": {
+              "type": "string",
+              "maxLength": 200,
+              "description": "Custom reminder message (falls back to habit name if omitted)."
+            },
+            "isEnabled": {
+              "type": "boolean"
+            }
+          },
+          "required": [
+            "id",
+            "habitId",
+            "time",
+            "channel",
+            "isEnabled",
+            "createdAt",
+            "updatedAt"
+          ]
+        }
+      }
+order: 1000

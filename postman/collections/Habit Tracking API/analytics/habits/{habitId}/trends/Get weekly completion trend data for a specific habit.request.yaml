@@ -1,0 +1,73 @@
+$kind: http-request
+url: "{{baseUrl}}/analytics/habits/:habitId/trends?from=1968-02-14&to=1968-02-14&granularity=weekly"
+method: GET
+headers:
+  Accept: application/json
+queryParams:
+  - key: from
+    value: 1968-02-14
+    $type: |-
+      {
+        "type": "object",
+        "properties": {
+          "value": {
+            "type": "string",
+            "format": "date"
+          }
+        },
+        "required": [
+          "value"
+        ]
+      }
+  - key: to
+    value: 1968-02-14
+    $type: |-
+      {
+        "type": "object",
+        "properties": {
+          "value": {
+            "type": "string",
+            "format": "date"
+          }
+        },
+        "required": [
+          "value"
+        ]
+      }
+  - key: granularity
+    value: weekly
+    description: Aggregation granularity.
+    $type: |-
+      {
+        "type": "object",
+        "properties": {
+          "value": {
+            "type": "string",
+            "default": "weekly",
+            "enum": [
+              "daily",
+              "weekly",
+              "monthly"
+            ]
+          }
+        }
+      }
+pathVariables:
+  - key: habitId
+    value: 3fa85f64-5717-4562-b3fc-2c963f66afa6
+    description: Unique identifier of the habit.
+    $type: |-
+      {
+        "type": "object",
+        "properties": {
+          "value": {
+            "type": "string",
+            "format": "uuid"
+          }
+        },
+        "required": [
+          "value"
+        ]
+      }
+examples: ./.resources/Get weekly completion trend data for a specific habit.resources/examples
+order: 1000

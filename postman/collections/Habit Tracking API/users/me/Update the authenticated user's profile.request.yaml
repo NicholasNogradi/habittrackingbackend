@@ -1,0 +1,54 @@
+$kind: http-request
+url: "{{baseUrl}}/users/me"
+method: PATCH
+headers:
+  - key: If-Match
+    value: '"d41d8cd98f00b204e9800998ecf8427e"'
+    description: |
+      ETag value for optimistic concurrency control. If the resource has
+      changed since the ETag was retrieved, the server returns **412**.
+    $type: string
+  - key: Content-Type
+    value: application/json
+  - key: Accept
+    value: application/json
+body:
+  type: json
+  content: |-
+    {
+      "displayName": "string",
+      "avatarUrl": "http://xvUTxlmJVwapf.hnGJpjg,sy3ELX1CqBmWdjhcJKSgpDj.0ebGUtwHxeA0f",
+      "timezone": "string",
+      "locale": "string",
+      "weekStartDay": "monday"
+    }
+  $type: |-
+    {
+      "type": "object",
+      "properties": {
+        "displayName": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 100
+        },
+        "avatarUrl": {
+          "type": "string",
+          "format": "uri"
+        },
+        "timezone": {
+          "type": "string"
+        },
+        "locale": {
+          "type": "string"
+        },
+        "weekStartDay": {
+          "type": "string",
+          "enum": [
+            "monday",
+            "sunday"
+          ]
+        }
+      }
+    }
+examples: ./.resources/Update the authenticated user's profile.resources/examples
+order: 2000

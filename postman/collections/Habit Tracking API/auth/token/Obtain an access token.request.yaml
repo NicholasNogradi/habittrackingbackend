@@ -1,0 +1,33 @@
+$kind: http-request
+description: |
+  Exchange credentials (password grant) or an authorisation code
+  (authorization_code grant) for a JWT access token and a refresh token.
+url: "{{baseUrl}}/auth/token"
+method: POST
+headers:
+  Content-Type: application/x-www-form-urlencoded
+  Accept: application/json
+body:
+  type: urlencoded
+  content:
+    - key: grant_type
+      value: authorization_code
+      description: OAuth 2.0 grant type.
+    - key: username
+      value: AOuXzI@IYtRfrRGjlj.wo
+      description: Required for `password` grant.
+    - key: password
+      value: string
+      description: Required for `password` grant.
+    - key: code
+      value: string
+      description: Required for `authorization_code` grant.
+    - key: redirect_uri
+      value: https://tYoNomIKIzUqiDhAtvVCwQCkQdyI.jhjp41XCGUV+jLvvWYZS4SEXY9A,L1zMQCWQYgmqbLcqIREQw8k8g3v-rA
+      description: Required for `authorization_code` grant.
+    - key: client_id
+      value: string
+    - key: client_secret
+      value: string
+examples: ./.resources/Obtain an access token.resources/examples
+order: 3000

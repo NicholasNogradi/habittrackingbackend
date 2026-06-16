@@ -1,0 +1,40 @@
+$kind: http-request
+url: "{{baseUrl}}/habits/:habitId/reminders/:reminderId"
+method: GET
+headers:
+  Accept: application/json
+pathVariables:
+  - key: habitId
+    value: 3fa85f64-5717-4562-b3fc-2c963f66afa6
+    description: Unique identifier of the habit.
+    $type: |-
+      {
+        "type": "object",
+        "properties": {
+          "value": {
+            "type": "string",
+            "format": "uuid"
+          }
+        },
+        "required": [
+          "value"
+        ]
+      }
+  - key: reminderId
+    value: d4e5f6a7-b8c9-0123-4567-89abcdef0123
+    description: Unique identifier of the reminder.
+    $type: |-
+      {
+        "type": "object",
+        "properties": {
+          "value": {
+            "type": "string",
+            "format": "uuid"
+          }
+        },
+        "required": [
+          "value"
+        ]
+      }
+examples: ./.resources/Get a reminder by ID.resources/examples
+order: 1000

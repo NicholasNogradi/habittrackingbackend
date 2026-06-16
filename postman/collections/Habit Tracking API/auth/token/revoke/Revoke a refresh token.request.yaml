@@ -1,0 +1,27 @@
+$kind: http-request
+description: Invalidate a refresh token, ending the session.
+url: "{{baseUrl}}/auth/token/revoke"
+method: POST
+headers:
+  Content-Type: application/json
+  Accept: application/problem+json
+body:
+  type: json
+  content: |-
+    {
+      "refresh_token": "string"
+    }
+  $type: |-
+    {
+      "type": "object",
+      "properties": {
+        "refresh_token": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "refresh_token"
+      ]
+    }
+examples: ./.resources/Revoke a refresh token.resources/examples
+order: 1000

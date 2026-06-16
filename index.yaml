@@ -1,0 +1,2279 @@
+openapi: 3.1.0
+
+# ============================================================
+# INFO
+# ============================================================
+info:
+  title: Habit Tracking API
+  version: 1.0.0
+  description: |
+    ## Overview
+    The Habit Tracking API provides a comprehensive, RESTful interface for creating,
+    managing, and analysing personal habits and their completion records. It is designed
+    for multi-tenant SaaS deployments and supports both individual users and teams.
+
+    ## Authentication
+    All endpoints (except `/auth/*`) require a valid **Bearer** (JWT) token obtained
+    via the OAuth 2.0 Authorization Code flow or the Password flow (for first-party
+    clients). Tokens expire after **3 600 seconds**; use the refresh-token grant to
+    obtain a new access token without prompting the user.
+
+    ## Versioning
+    The API is versioned through the URL path (`/v1`). Breaking changes will be
+    introduced in a new major version. Minor and patch releases are backwards-compatible.
+
+    ## Rate Limiting
+    Responses include `X-RateLimit-Limit`, `X-RateLimit-Remaining`, and
+    `X-RateLimit-Reset` headers. Exceeding the limit returns **429 Too Many Requests**.
+
+    ## Pagination
+    Collection endpoints support cursor-based pagination via `cursor` and `limit`
+    query parameters. Responses include a `pagination` envelope with `nextCursor` and
+    `totalCount`.
+
+    ## Idempotency
+    `POST` endpoints that create resources accept an optional `Idempotency-Key` header.
+    Submitting the same key within 24 hours returns the original response without
+    creating a duplicate resource.
+  contact:
+    name: Platform Engineering
+    email: platform-engineering@habittrack.io
+    url: https://developers.habittrack.io
+  license:
+    name: Apache 2.0
+    url: https://www.apache.org/licenses/LICENSE-2.0.html
+  termsOfService: https://habittrack.io/terms
+
+# ============================================================
+# SERVERS
+# ============================================================
+servers:
+  - url: https://api.habittrack.io/v1
+    description: Production
+  - url: https://api.staging.habittrack.io/v1
+    description: Staging
+  - url: http://localhost:8080/v1
+    description: Local development
+
+# ============================================================
+# SECURITY (global default — can be overridden per-operation)
+# ============================================================
+security:
+  - BearerAuth: []
+
+# ============================================================
+# TAGS
+# ============================================================
+tags:
+  - name: Authentication
+    description: Obtain and refresh access tokens.
+  - name: Users
+    description: Manage the authenticated user's profile and preferences.
+  - name: Habits
+    description: CRUD operations on habit definitions.
+  - name: Categories
+    description: Organise habits into categories.
+  - name: Check-ins
+    description: Record habit completions (check-ins) and associated metadata.
+  - name: Streaks
+    description: Query current and historical streak data for a habit.
+  - name: Analytics
+    description: Aggregated statistics and trend reports.
+  - name: Reminders
+    description: Schedule push / email reminders for individual habits.
+
+# ============================================================
+# PATHS
+# ============================================================
+paths:
+
+  # ----------------------------------------------------------
+  # AUTH
+  # ----------------------------------------------------------
+
+  /auth/token:
+    post:
+      operationId: createToken
+      summary: Obtain an access token
+      description: |
+        Exchange credentials (password grant) or an authorisation code
+        (authorization_code grant) for a JWT access token and a refresh token.
+      tags:
+        - Authentication
+      security: []   # Public – no auth required
+      requestBody:
+        required: true
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/TokenRequest'
+      responses:
+        '200':
+          description: Token issued successfully.
+          headers:
+            Cache-Control:
+              $ref: '#/components/headers/CacheControlNoStore'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TokenResponse'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '429':
+          $ref: '#/components/responses/TooManyRequests'
+
+  /auth/token/refresh:
+    post:
+      operationId: refreshToken
+      summary: Refresh an access token
+      description: Exchange a valid refresh token for a new access token.
+      tags:
+        - Authentication
+      security: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RefreshTokenRequest'
+      responses:
+        '200':
+          description: New access token issued.
+          headers:
+            Cache-Control:
+              $ref: '#/components/headers/CacheControlNoStore'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TokenResponse'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '429':
+          $ref: '#/components/responses/TooManyRequests'
+
+  /auth/token/revoke:
+    post:
+      operationId: revokeToken
+      summary: Revoke a refresh token
+      description: Invalidate a refresh token, ending the session.
+      tags:
+        - Authentication
+      security: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RevokeTokenRequest'
+      responses:
+        '204':
+          description: Token revoked. No content returned.
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '429':
+          $ref: '#/components/responses/TooManyRequests'
+
+  # ----------------------------------------------------------
+  # USERS
+  # ----------------------------------------------------------
+
+  /users/me:
+    get:
+      operationId: getCurrentUser
+      summary: Get the authenticated user's profile
+      tags:
+        - Users
+      responses:
+        '200':
+          description: User profile returned.
+          headers:
+            ETag:
+              $ref: '#/components/headers/ETag'
+            Last-Modified:
+              $ref: '#/components/headers/LastModified'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '429':
+          $ref: '#/components/responses/TooManyRequests'
+
+    patch:
+      operationId: updateCurrentUser
+      summary: Update the authenticated user's profile
+      tags:
+        - Users
+      parameters:
+        - $ref: '#/components/parameters/IfMatch'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UserUpdateRequest'
+      responses:
+        '200':
+          description: Profile updated.
+          headers:
+            ETag:
+              $ref: '#/components/headers/ETag'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '409':
+          $ref: '#/components/responses/Conflict'
+        '412':
+          $ref: '#/components/responses/PreconditionFailed'
+        '422':
+          $ref: '#/components/responses/UnprocessableEntity'
+        '429':
+          $ref: '#/components/responses/TooManyRequests'
+
+    delete:
+      operationId: deleteCurrentUser
+      summary: Delete (close) the authenticated user's account
+      description: |
+        Permanently deletes the account and all associated data.
+        This operation is **irreversible**. A 30-day grace period applies;
+        the account can be restored by contacting support within that window.
+      tags:
+        - Users
+      responses:
+        '204':
+          description: Account deletion scheduled.
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '429':
+          $ref: '#/components/responses/TooManyRequests'
+
+  # ----------------------------------------------------------
+  # CATEGORIES
+  # ----------------------------------------------------------
+
+  /categories:
+    get:
+      operationId: listCategories
+      summary: List habit categories
+      tags:
+        - Categories
+      parameters:
+        - $ref: '#/components/parameters/Limit'
+        - $ref: '#/components/parameters/Cursor'
+      responses:
+        '200':
+          description: Paginated list of categories.
+          headers:
+            X-RateLimit-Limit:
+              $ref: '#/components/headers/RateLimitLimit'
+            X-RateLimit-Remaining:
+              $ref: '#/components/headers/RateLimitRemaining'
+            X-RateLimit-Reset:
+              $ref: '#/components/headers/RateLimitReset'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CategoryPage'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '429':
+          $ref: '#/components/responses/TooManyRequests'
+
+    post:
+      operationId: createCategory
+      summary: Create a habit category
+      tags:
+        - Categories
+      parameters:
+        - $ref: '#/components/parameters/IdempotencyKey'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CategoryCreateRequest'
+      responses:
+        '201':
+          description: Category created.
+          headers:
+            Location:
+              $ref: '#/components/headers/Location'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Category'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '409':
+          $ref: '#/components/responses/Conflict'
+        '422':
+          $ref: '#/components/responses/UnprocessableEntity'
+        '429':
+          $ref: '#/components/responses/TooManyRequests'
+
+  /categories/{categoryId}:
+    parameters:
+      - $ref: '#/components/parameters/CategoryId'
+
+    get:
+      operationId: getCategory
+      summary: Get a category by ID
+      tags:
+        - Categories
+      responses:
+        '200':
+          description: Category returned.
+          headers:
+            ETag:
+              $ref: '#/components/headers/ETag'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Category'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '429':
+          $ref: '#/components/responses/TooManyRequests'
+
+    patch:
+      operationId: updateCategory
+      summary: Update a category
+      tags:
+        - Categories
+      parameters:
+        - $ref: '#/components/parameters/IfMatch'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CategoryUpdateRequest'
+      responses:
+        '200':
+          description: Category updated.
+          headers:
+            ETag:
+              $ref: '#/components/headers/ETag'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Category'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '409':
+          $ref: '#/components/responses/Conflict'
+        '412':
+          $ref: '#/components/responses/PreconditionFailed'
+        '422':
+          $ref: '#/components/responses/UnprocessableEntity'
+        '429':
+          $ref: '#/components/responses/TooManyRequests'
+
+    delete:
+      operationId: deleteCategory
+      summary: Delete a category
+      description: |
+        Deletes the category. Habits assigned to this category will have
+        their `categoryId` set to `null`.
+      tags:
+        - Categories
+      responses:
+        '204':
+          description: Category deleted.
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '429':
+          $ref: '#/components/responses/TooManyRequests'
+
+  # ----------------------------------------------------------
+  # HABITS
+  # ----------------------------------------------------------
+
+  /habits:
+    get:
+      operationId: listHabits
+      summary: List habits
+      description: Returns a paginated list of the authenticated user's habits.
+      tags:
+        - Habits
+      parameters:
+        - $ref: '#/components/parameters/Limit'
+        - $ref: '#/components/parameters/Cursor'
+        - name: categoryId
+          in: query
+          description: Filter habits by category.
+          schema:
+            type: string
+            format: uuid
+        - name: status
+          in: query
+          description: Filter by habit status.
+          schema:
+            $ref: '#/components/schemas/HabitStatus'
+        - name: frequency
+          in: query
+          description: Filter by recurrence frequency.
+          schema:
+            $ref: '#/components/schemas/HabitFrequency'
+        - name: sort
+          in: query
+          description: Field to sort by (prefix with `-` for descending).
+          schema:
+            type: string
+            enum: [name, -name, createdAt, -createdAt, streak, -streak]
+            default: -createdAt
+      responses:
+        '200':
+          description: Paginated list of habits.
+          headers:
+            X-RateLimit-Limit:
+              $ref: '#/components/headers/RateLimitLimit'
+            X-RateLimit-Remaining:
+              $ref: '#/components/headers/RateLimitRemaining'
+            X-RateLimit-Reset:
+              $ref: '#/components/headers/RateLimitReset'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HabitPage'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '429':
+          $ref: '#/components/responses/TooManyRequests'
+
+    post:
+      operationId: createHabit
+      summary: Create a habit
+      tags:
+        - Habits
+      parameters:
+        - $ref: '#/components/parameters/IdempotencyKey'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/HabitCreateRequest'
+      responses:
+        '201':
+          description: Habit created.
+          headers:
+            Location:
+              $ref: '#/components/headers/Location'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Habit'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '422':
+          $ref: '#/components/responses/UnprocessableEntity'
+        '429':
+          $ref: '#/components/responses/TooManyRequests'
+
+  /habits/{habitId}:
+    parameters:
+      - $ref: '#/components/parameters/HabitId'
+
+    get:
+      operationId: getHabit
+      summary: Get a habit by ID
+      tags:
+        - Habits
+      responses:
+        '200':
+          description: Habit returned.
+          headers:
+            ETag:
+              $ref: '#/components/headers/ETag'
+            Last-Modified:
+              $ref: '#/components/headers/LastModified'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Habit'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '429':
+          $ref: '#/components/responses/TooManyRequests'
+
+    put:
+      operationId: replaceHabit
+      summary: Replace a habit (full update)
+      tags:
+        - Habits
+      parameters:
+        - $ref: '#/components/parameters/IfMatch'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/HabitCreateRequest'
+      responses:
+        '200':
+          description: Habit replaced.
+          headers:
+            ETag:
+              $ref: '#/components/headers/ETag'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Habit'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '412':
+          $ref: '#/components/responses/PreconditionFailed'
+        '422':
+          $ref: '#/components/responses/UnprocessableEntity'
+        '429':
+          $ref: '#/components/responses/TooManyRequests'
+
+    patch:
+      operationId: updateHabit
+      summary: Partially update a habit
+      tags:
+        - Habits
+      parameters:
+        - $ref: '#/components/parameters/IfMatch'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/HabitUpdateRequest'
+      responses:
+        '200':
+          description: Habit updated.
+          headers:
+            ETag:
+              $ref: '#/components/headers/ETag'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Habit'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '412':
+          $ref: '#/components/responses/PreconditionFailed'
+        '422':
+          $ref: '#/components/responses/UnprocessableEntity'
+        '429':
+          $ref: '#/components/responses/TooManyRequests'
+
+    delete:
+      operationId: deleteHabit
+      summary: Delete a habit
+      description: |
+        Deletes the habit and all associated check-ins, streaks, and reminders.
+        This operation is **irreversible**.
+      tags:
+        - Habits
+      responses:
+        '204':
+          description: Habit deleted.
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '429':
+          $ref: '#/components/responses/TooManyRequests'
+
+  # ----------------------------------------------------------
+  # CHECK-INS (sub-resource of habit)
+  # ----------------------------------------------------------
+
+  /habits/{habitId}/checkins:
+    parameters:
+      - $ref: '#/components/parameters/HabitId'
+
+    get:
+      operationId: listCheckins
+      summary: List check-ins for a habit
+      tags:
+        - Check-ins
+      parameters:
+        - $ref: '#/components/parameters/Limit'
+        - $ref: '#/components/parameters/Cursor'
+        - name: from
+          in: query
+          description: Filter check-ins on or after this date (ISO 8601 date).
+          schema:
+            type: string
+            format: date
+          example: '2025-01-01'
+        - name: to
+          in: query
+          description: Filter check-ins on or before this date (ISO 8601 date).
+          schema:
+            type: string
+            format: date
+          example: '2025-03-31'
+        - name: status
+          in: query
+          description: Filter by completion status.
+          schema:
+            $ref: '#/components/schemas/CheckinStatus'
+      responses:
+        '200':
+          description: Paginated list of check-ins.
+          headers:
+            X-RateLimit-Limit:
+              $ref: '#/components/headers/RateLimitLimit'
+            X-RateLimit-Remaining:
+              $ref: '#/components/headers/RateLimitRemaining'
+            X-RateLimit-Reset:
+              $ref: '#/components/headers/RateLimitReset'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CheckinPage'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '429':
+          $ref: '#/components/responses/TooManyRequests'
+
+    post:
+      operationId: createCheckin
+      summary: Record a check-in
+      description: |
+        Records a habit completion for a specific date. Only one check-in
+        per habit per day is permitted; submitting a duplicate returns **409**.
+      tags:
+        - Check-ins
+      parameters:
+        - $ref: '#/components/parameters/IdempotencyKey'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CheckinCreateRequest'
+      responses:
+        '201':
+          description: Check-in recorded.
+          headers:
+            Location:
+              $ref: '#/components/headers/Location'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Checkin'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '409':
+          $ref: '#/components/responses/Conflict'
+        '422':
+          $ref: '#/components/responses/UnprocessableEntity'
+        '429':
+          $ref: '#/components/responses/TooManyRequests'
+
+  /habits/{habitId}/checkins/{checkinId}:
+    parameters:
+      - $ref: '#/components/parameters/HabitId'
+      - $ref: '#/components/parameters/CheckinId'
+
+    get:
+      operationId: getCheckin
+      summary: Get a check-in by ID
+      tags:
+        - Check-ins
+      responses:
+        '200':
+          description: Check-in returned.
+          headers:
+            ETag:
+              $ref: '#/components/headers/ETag'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Checkin'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '429':
+          $ref: '#/components/responses/TooManyRequests'
+
+    patch:
+      operationId: updateCheckin
+      summary: Update a check-in (e.g. add a note)
+      tags:
+        - Check-ins
+      parameters:
+        - $ref: '#/components/parameters/IfMatch'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CheckinUpdateRequest'
+      responses:
+        '200':
+          description: Check-in updated.
+          headers:
+            ETag:
+              $ref: '#/components/headers/ETag'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Checkin'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '412':
+          $ref: '#/components/responses/PreconditionFailed'
+        '422':
+          $ref: '#/components/responses/UnprocessableEntity'
+        '429':
+          $ref: '#/components/responses/TooManyRequests'
+
+    delete:
+      operationId: deleteCheckin
+      summary: Delete a check-in
+      tags:
+        - Check-ins
+      responses:
+        '204':
+          description: Check-in deleted.
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '429':
+          $ref: '#/components/responses/TooManyRequests'
+
+  # ----------------------------------------------------------
+  # STREAKS
+  # ----------------------------------------------------------
+
+  /habits/{habitId}/streaks:
+    parameters:
+      - $ref: '#/components/parameters/HabitId'
+
+    get:
+      operationId: listStreaks
+      summary: List streak history for a habit
+      tags:
+        - Streaks
+      parameters:
+        - $ref: '#/components/parameters/Limit'
+        - $ref: '#/components/parameters/Cursor'
+      responses:
+        '200':
+          description: Paginated list of streak records.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/StreakPage'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '429':
+          $ref: '#/components/responses/TooManyRequests'
+
+  /habits/{habitId}/streaks/current:
+    parameters:
+      - $ref: '#/components/parameters/HabitId'
+
+    get:
+      operationId: getCurrentStreak
+      summary: Get the current active streak for a habit
+      tags:
+        - Streaks
+      responses:
+        '200':
+          description: Current streak returned.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Streak'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '429':
+          $ref: '#/components/responses/TooManyRequests'
+
+  # ----------------------------------------------------------
+  # REMINDERS
+  # ----------------------------------------------------------
+
+  /habits/{habitId}/reminders:
+    parameters:
+      - $ref: '#/components/parameters/HabitId'
+
+    get:
+      operationId: listReminders
+      summary: List reminders for a habit
+      tags:
+        - Reminders
+      responses:
+        '200':
+          description: List of reminders.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Reminder'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '429':
+          $ref: '#/components/responses/TooManyRequests'
+
+    post:
+      operationId: createReminder
+      summary: Create a reminder for a habit
+      tags:
+        - Reminders
+      parameters:
+        - $ref: '#/components/parameters/IdempotencyKey'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ReminderCreateRequest'
+      responses:
+        '201':
+          description: Reminder created.
+          headers:
+            Location:
+              $ref: '#/components/headers/Location'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Reminder'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '422':
+          $ref: '#/components/responses/UnprocessableEntity'
+        '429':
+          $ref: '#/components/responses/TooManyRequests'
+
+  /habits/{habitId}/reminders/{reminderId}:
+    parameters:
+      - $ref: '#/components/parameters/HabitId'
+      - $ref: '#/components/parameters/ReminderId'
+
+    get:
+      operationId: getReminder
+      summary: Get a reminder by ID
+      tags:
+        - Reminders
+      responses:
+        '200':
+          description: Reminder returned.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Reminder'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '429':
+          $ref: '#/components/responses/TooManyRequests'
+
+    patch:
+      operationId: updateReminder
+      summary: Update a reminder
+      tags:
+        - Reminders
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ReminderUpdateRequest'
+      responses:
+        '200':
+          description: Reminder updated.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Reminder'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '422':
+          $ref: '#/components/responses/UnprocessableEntity'
+        '429':
+          $ref: '#/components/responses/TooManyRequests'
+
+    delete:
+      operationId: deleteReminder
+      summary: Delete a reminder
+      tags:
+        - Reminders
+      responses:
+        '204':
+          description: Reminder deleted.
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '429':
+          $ref: '#/components/responses/TooManyRequests'
+
+  # ----------------------------------------------------------
+  # ANALYTICS
+  # ----------------------------------------------------------
+
+  /analytics/summary:
+    get:
+      operationId: getAnalyticsSummary
+      summary: Get overall analytics summary for the authenticated user
+      description: |
+        Returns aggregate statistics across all habits: total check-ins,
+        completion rate, longest and current streaks, and active habit count.
+      tags:
+        - Analytics
+      parameters:
+        - name: from
+          in: query
+          required: true
+          description: Start of the analysis window (ISO 8601 date).
+          schema:
+            type: string
+            format: date
+        - name: to
+          in: query
+          required: true
+          description: End of the analysis window (ISO 8601 date, inclusive).
+          schema:
+            type: string
+            format: date
+      responses:
+        '200':
+          description: Analytics summary returned.
+          headers:
+            Cache-Control:
+              $ref: '#/components/headers/CacheControlPublic'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AnalyticsSummary'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '429':
+          $ref: '#/components/responses/TooManyRequests'
+
+  /analytics/habits/{habitId}/trends:
+    parameters:
+      - $ref: '#/components/parameters/HabitId'
+
+    get:
+      operationId: getHabitTrends
+      summary: Get weekly completion trend data for a specific habit
+      tags:
+        - Analytics
+      parameters:
+        - name: from
+          in: query
+          required: true
+          schema:
+            type: string
+            format: date
+        - name: to
+          in: query
+          required: true
+          schema:
+            type: string
+            format: date
+        - name: granularity
+          in: query
+          description: Aggregation granularity.
+          schema:
+            type: string
+            enum: [daily, weekly, monthly]
+            default: weekly
+      responses:
+        '200':
+          description: Trend data returned.
+          headers:
+            Cache-Control:
+              $ref: '#/components/headers/CacheControlPublic'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HabitTrends'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '429':
+          $ref: '#/components/responses/TooManyRequests'
+
+# ============================================================
+# COMPONENTS
+# ============================================================
+components:
+
+  # ----------------------------------------------------------
+  # SECURITY SCHEMES
+  # ----------------------------------------------------------
+  securitySchemes:
+
+    BearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+      description: |
+        JWT access token issued by the `/auth/token` endpoint.
+        Pass in the `Authorization` header as: `Authorization: Bearer <token>`
+
+    OAuth2:
+      type: oauth2
+      description: OAuth 2.0 flows for third-party integrations.
+      flows:
+        authorizationCode:
+          authorizationUrl: https://auth.habittrack.io/oauth/authorize
+          tokenUrl: https://auth.habittrack.io/oauth/token
+          refreshUrl: https://auth.habittrack.io/oauth/token/refresh
+          scopes:
+            "habits:read": Read habit definitions and check-ins.
+            "habits:write": Create and modify habit definitions.
+            "checkins:write": Record and update check-ins.
+            "analytics:read": Access aggregated analytics data.
+            "reminders:write": Create and manage reminders.
+            "profile:read": Read user profile.
+            "profile:write": Modify user profile.
+
+    ApiKeyAuth:
+      type: apiKey
+      in: header
+      name: X-API-Key
+      description: |
+        Machine-to-machine integrations may use a long-lived API key.
+        Keys are scoped to specific permissions and should be rotated regularly.
+
+  # ----------------------------------------------------------
+  # PARAMETERS
+  # ----------------------------------------------------------
+  parameters:
+
+    HabitId:
+      name: habitId
+      in: path
+      required: true
+      description: Unique identifier of the habit.
+      schema:
+        type: string
+        format: uuid
+      example: 3fa85f64-5717-4562-b3fc-2c963f66afa6
+
+    CategoryId:
+      name: categoryId
+      in: path
+      required: true
+      description: Unique identifier of the category.
+      schema:
+        type: string
+        format: uuid
+      example: 1c3b4d12-89ab-4def-0123-456789abcdef
+
+    CheckinId:
+      name: checkinId
+      in: path
+      required: true
+      description: Unique identifier of the check-in.
+      schema:
+        type: string
+        format: uuid
+      example: a1b2c3d4-e5f6-7890-abcd-ef1234567890
+
+    ReminderId:
+      name: reminderId
+      in: path
+      required: true
+      description: Unique identifier of the reminder.
+      schema:
+        type: string
+        format: uuid
+      example: d4e5f6a7-b8c9-0123-4567-89abcdef0123
+
+    Limit:
+      name: limit
+      in: query
+      description: Maximum number of items to return per page (1–100).
+      schema:
+        type: integer
+        format: int32
+        minimum: 1
+        maximum: 100
+        default: 20
+      example: 20
+
+    Cursor:
+      name: cursor
+      in: query
+      description: Opaque pagination cursor returned by the previous page response.
+      schema:
+        type: string
+      example: eyJpZCI6IjEyMyIsInRzIjoiMjAyNS0wMS0wMVQwMDowMDowMFoifQ==
+
+    IdempotencyKey:
+      name: Idempotency-Key
+      in: header
+      required: false
+      description: |
+        Client-generated UUID to make the request idempotent.
+        The same key within 24 hours returns the original response.
+      schema:
+        type: string
+        format: uuid
+      example: 550e8400-e29b-41d4-a716-446655440000
+
+    IfMatch:
+      name: If-Match
+      in: header
+      required: false
+      description: |
+        ETag value for optimistic concurrency control. If the resource has
+        changed since the ETag was retrieved, the server returns **412**.
+      schema:
+        type: string
+      example: '"d41d8cd98f00b204e9800998ecf8427e"'
+
+  # ----------------------------------------------------------
+  # HEADERS
+  # ----------------------------------------------------------
+  headers:
+
+    Location:
+      description: URL of the newly created resource.
+      schema:
+        type: string
+        format: uri
+      example: https://api.habittrack.io/v1/habits/3fa85f64-5717-4562-b3fc-2c963f66afa6
+
+    ETag:
+      description: Opaque version identifier for the resource (for optimistic concurrency).
+      schema:
+        type: string
+      example: '"d41d8cd98f00b204e9800998ecf8427e"'
+
+    LastModified:
+      description: Date and time the resource was last modified (RFC 7231).
+      schema:
+        type: string
+        format: date-time
+      example: 'Thu, 01 Jan 2025 12:00:00 GMT'
+
+    CacheControlNoStore:
+      description: Prevent caching of sensitive authentication responses.
+      schema:
+        type: string
+        enum: ['no-store']
+      example: no-store
+
+    CacheControlPublic:
+      description: Allow shared caches to store the response for up to 60 seconds.
+      schema:
+        type: string
+      example: 'public, max-age=60'
+
+    RateLimitLimit:
+      description: Maximum requests allowed in the current window.
+      schema:
+        type: integer
+        format: int32
+      example: 1000
+
+    RateLimitRemaining:
+      description: Requests remaining in the current window.
+      schema:
+        type: integer
+        format: int32
+      example: 987
+
+    RateLimitReset:
+      description: Unix timestamp (seconds) when the rate-limit window resets.
+      schema:
+        type: integer
+        format: int64
+      example: 1735689600
+
+  # ----------------------------------------------------------
+  # SCHEMAS
+  # ----------------------------------------------------------
+  schemas:
+
+    # ---- Auth ------------------------------------------------
+
+    TokenRequest:
+      type: object
+      required:
+        - grant_type
+      properties:
+        grant_type:
+          type: string
+          enum: [password, authorization_code, client_credentials]
+          description: OAuth 2.0 grant type.
+        username:
+          type: string
+          format: email
+          description: Required for `password` grant.
+        password:
+          type: string
+          format: password
+          description: Required for `password` grant.
+        code:
+          type: string
+          description: Required for `authorization_code` grant.
+        redirect_uri:
+          type: string
+          format: uri
+          description: Required for `authorization_code` grant.
+        client_id:
+          type: string
+        client_secret:
+          type: string
+          format: password
+
+    TokenResponse:
+      type: object
+      required:
+        - access_token
+        - token_type
+        - expires_in
+      properties:
+        access_token:
+          type: string
+          description: JWT access token.
+        token_type:
+          type: string
+          enum: [Bearer]
+        expires_in:
+          type: integer
+          format: int32
+          description: Lifetime of the access token in seconds.
+          example: 3600
+        refresh_token:
+          type: string
+          description: Opaque refresh token (only returned for `password` and `authorization_code` grants).
+        scope:
+          type: string
+          description: Space-delimited list of scopes granted.
+          example: 'habits:read habits:write checkins:write'
+
+    RefreshTokenRequest:
+      type: object
+      required:
+        - refresh_token
+      properties:
+        refresh_token:
+          type: string
+          description: A valid refresh token previously issued by the server.
+
+    RevokeTokenRequest:
+      type: object
+      required:
+        - refresh_token
+      properties:
+        refresh_token:
+          type: string
+
+    # ---- Users -----------------------------------------------
+
+    User:
+      type: object
+      required:
+        - id
+        - email
+        - displayName
+        - createdAt
+        - updatedAt
+      properties:
+        id:
+          type: string
+          format: uuid
+          readOnly: true
+        email:
+          type: string
+          format: email
+        displayName:
+          type: string
+          minLength: 1
+          maxLength: 100
+        avatarUrl:
+          type: [string, 'null']
+          format: uri
+        timezone:
+          type: string
+          description: IANA timezone string.
+          example: America/New_York
+        locale:
+          type: string
+          description: BCP 47 language tag.
+          example: en-US
+        weekStartDay:
+          type: string
+          enum: [monday, sunday]
+          default: monday
+          description: First day of the user's calendar week.
+        createdAt:
+          type: string
+          format: date-time
+          readOnly: true
+        updatedAt:
+          type: string
+          format: date-time
+          readOnly: true
+
+    UserUpdateRequest:
+      type: object
+      properties:
+        displayName:
+          type: string
+          minLength: 1
+          maxLength: 100
+        avatarUrl:
+          type: [string, 'null']
+          format: uri
+        timezone:
+          type: string
+        locale:
+          type: string
+        weekStartDay:
+          type: string
+          enum: [monday, sunday]
+
+    # ---- Categories ------------------------------------------
+
+    Category:
+      type: object
+      required:
+        - id
+        - name
+        - createdAt
+        - updatedAt
+      properties:
+        id:
+          type: string
+          format: uuid
+          readOnly: true
+        name:
+          type: string
+          minLength: 1
+          maxLength: 80
+          example: Health & Fitness
+        description:
+          type: [string, 'null']
+          maxLength: 500
+        color:
+          type: string
+          pattern: '^#[0-9A-Fa-f]{6}$'
+          description: Hex colour code for UI theming.
+          example: '#4CAF50'
+        icon:
+          type: string
+          maxLength: 50
+          description: Icon identifier (e.g. icon library slug).
+          example: dumbbell
+        habitCount:
+          type: integer
+          format: int32
+          readOnly: true
+          description: Number of habits assigned to this category.
+        createdAt:
+          type: string
+          format: date-time
+          readOnly: true
+        updatedAt:
+          type: string
+          format: date-time
+          readOnly: true
+
+    CategoryCreateRequest:
+      type: object
+      required:
+        - name
+      properties:
+        name:
+          type: string
+          minLength: 1
+          maxLength: 80
+        description:
+          type: [string, 'null']
+          maxLength: 500
+        color:
+          type: string
+          pattern: '^#[0-9A-Fa-f]{6}$'
+        icon:
+          type: string
+          maxLength: 50
+
+    CategoryUpdateRequest:
+      type: object
+      properties:
+        name:
+          type: string
+          minLength: 1
+          maxLength: 80
+        description:
+          type: [string, 'null']
+          maxLength: 500
+        color:
+          type: string
+          pattern: '^#[0-9A-Fa-f]{6}$'
+        icon:
+          type: string
+          maxLength: 50
+
+    CategoryPage:
+      allOf:
+        - $ref: '#/components/schemas/PaginationEnvelope'
+        - type: object
+          required:
+            - data
+          properties:
+            data:
+              type: array
+              items:
+                $ref: '#/components/schemas/Category'
+
+    # ---- Habits ----------------------------------------------
+
+    HabitStatus:
+      type: string
+      enum: [active, paused, archived]
+      description: Lifecycle status of a habit.
+
+    HabitFrequency:
+      type: string
+      enum: [daily, weekly, custom]
+      description: How often the habit should be completed.
+
+    Habit:
+      type: object
+      required:
+        - id
+        - name
+        - frequency
+        - status
+        - targetCount
+        - currentStreak
+        - longestStreak
+        - createdAt
+        - updatedAt
+      properties:
+        id:
+          type: string
+          format: uuid
+          readOnly: true
+        name:
+          type: string
+          minLength: 1
+          maxLength: 200
+          example: Morning Run
+        description:
+          type: [string, 'null']
+          maxLength: 1000
+        categoryId:
+          type: [string, 'null']
+          format: uuid
+          description: Reference to the parent category.
+        color:
+          type: [string, 'null']
+          pattern: '^#[0-9A-Fa-f]{6}$'
+        icon:
+          type: [string, 'null']
+          maxLength: 50
+        frequency:
+          $ref: '#/components/schemas/HabitFrequency'
+        targetDays:
+          type: array
+          items:
+            type: string
+            enum: [monday, tuesday, wednesday, thursday, friday, saturday, sunday]
+          description: Required when `frequency` is `weekly` or `custom`.
+          example: [monday, wednesday, friday]
+        targetCount:
+          type: integer
+          format: int32
+          minimum: 1
+          description: Number of completions expected per period.
+          example: 1
+        unit:
+          type: [string, 'null']
+          maxLength: 50
+          description: Measurement unit (e.g. "minutes", "glasses", "pages").
+          example: minutes
+        targetValue:
+          type: [number, 'null']
+          format: double
+          description: Target quantitative value per check-in (e.g. 30 minutes).
+          example: 30
+        status:
+          $ref: '#/components/schemas/HabitStatus'
+        startDate:
+          type: string
+          format: date
+          description: Date the habit tracking begins.
+          example: '2025-01-01'
+        endDate:
+          type: [string, 'null']
+          format: date
+          description: Optional date the habit tracking ends.
+        currentStreak:
+          type: integer
+          format: int32
+          readOnly: true
+          description: Length of the currently active streak (in periods).
+        longestStreak:
+          type: integer
+          format: int32
+          readOnly: true
+          description: Longest ever streak for this habit.
+        completionRate:
+          type: number
+          format: double
+          readOnly: true
+          minimum: 0
+          maximum: 1
+          description: Ratio of completed periods to total elapsed periods.
+          example: 0.87
+        createdAt:
+          type: string
+          format: date-time
+          readOnly: true
+        updatedAt:
+          type: string
+          format: date-time
+          readOnly: true
+
+    HabitCreateRequest:
+      type: object
+      required:
+        - name
+        - frequency
+      properties:
+        name:
+          type: string
+          minLength: 1
+          maxLength: 200
+        description:
+          type: [string, 'null']
+          maxLength: 1000
+        categoryId:
+          type: [string, 'null']
+          format: uuid
+        color:
+          type: [string, 'null']
+          pattern: '^#[0-9A-Fa-f]{6}$'
+        icon:
+          type: [string, 'null']
+          maxLength: 50
+        frequency:
+          $ref: '#/components/schemas/HabitFrequency'
+        targetDays:
+          type: array
+          items:
+            type: string
+            enum: [monday, tuesday, wednesday, thursday, friday, saturday, sunday]
+        targetCount:
+          type: integer
+          format: int32
+          minimum: 1
+          default: 1
+        unit:
+          type: [string, 'null']
+          maxLength: 50
+        targetValue:
+          type: [number, 'null']
+          format: double
+        startDate:
+          type: string
+          format: date
+        endDate:
+          type: [string, 'null']
+          format: date
+
+    HabitUpdateRequest:
+      type: object
+      properties:
+        name:
+          type: string
+          minLength: 1
+          maxLength: 200
+        description:
+          type: [string, 'null']
+          maxLength: 1000
+        categoryId:
+          type: [string, 'null']
+          format: uuid
+        color:
+          type: [string, 'null']
+          pattern: '^#[0-9A-Fa-f]{6}$'
+        icon:
+          type: [string, 'null']
+          maxLength: 50
+        frequency:
+          $ref: '#/components/schemas/HabitFrequency'
+        targetDays:
+          type: array
+          items:
+            type: string
+            enum: [monday, tuesday, wednesday, thursday, friday, saturday, sunday]
+        targetCount:
+          type: integer
+          format: int32
+          minimum: 1
+        unit:
+          type: [string, 'null']
+          maxLength: 50
+        targetValue:
+          type: [number, 'null']
+          format: double
+        status:
+          $ref: '#/components/schemas/HabitStatus'
+        endDate:
+          type: [string, 'null']
+          format: date
+
+    HabitPage:
+      allOf:
+        - $ref: '#/components/schemas/PaginationEnvelope'
+        - type: object
+          required:
+            - data
+          properties:
+            data:
+              type: array
+              items:
+                $ref: '#/components/schemas/Habit'
+
+    # ---- Check-ins -------------------------------------------
+
+    CheckinStatus:
+      type: string
+      enum: [completed, skipped, missed]
+      description: Completion status of a check-in period.
+
+    Checkin:
+      type: object
+      required:
+        - id
+        - habitId
+        - date
+        - status
+        - createdAt
+        - updatedAt
+      properties:
+        id:
+          type: string
+          format: uuid
+          readOnly: true
+        habitId:
+          type: string
+          format: uuid
+          readOnly: true
+        date:
+          type: string
+          format: date
+          description: Calendar date the check-in applies to.
+          example: '2025-06-04'
+        status:
+          $ref: '#/components/schemas/CheckinStatus'
+        value:
+          type: [number, 'null']
+          format: double
+          description: Quantitative value recorded (e.g. 35 minutes run).
+          example: 35
+        note:
+          type: [string, 'null']
+          maxLength: 1000
+          description: Free-text note for this check-in.
+        mood:
+          type: [integer, 'null']
+          format: int32
+          minimum: 1
+          maximum: 5
+          description: Optional mood rating (1 = very poor, 5 = excellent).
+        createdAt:
+          type: string
+          format: date-time
+          readOnly: true
+        updatedAt:
+          type: string
+          format: date-time
+          readOnly: true
+
+    CheckinCreateRequest:
+      type: object
+      required:
+        - date
+        - status
+      properties:
+        date:
+          type: string
+          format: date
+        status:
+          $ref: '#/components/schemas/CheckinStatus'
+        value:
+          type: [number, 'null']
+          format: double
+        note:
+          type: [string, 'null']
+          maxLength: 1000
+        mood:
+          type: [integer, 'null']
+          format: int32
+          minimum: 1
+          maximum: 5
+
+    CheckinUpdateRequest:
+      type: object
+      properties:
+        status:
+          $ref: '#/components/schemas/CheckinStatus'
+        value:
+          type: [number, 'null']
+          format: double
+        note:
+          type: [string, 'null']
+          maxLength: 1000
+        mood:
+          type: [integer, 'null']
+          format: int32
+          minimum: 1
+          maximum: 5
+
+    CheckinPage:
+      allOf:
+        - $ref: '#/components/schemas/PaginationEnvelope'
+        - type: object
+          required:
+            - data
+          properties:
+            data:
+              type: array
+              items:
+                $ref: '#/components/schemas/Checkin'
+
+    # ---- Streaks ---------------------------------------------
+
+    Streak:
+      type: object
+      required:
+        - id
+        - habitId
+        - startDate
+        - length
+        - isActive
+      properties:
+        id:
+          type: string
+          format: uuid
+          readOnly: true
+        habitId:
+          type: string
+          format: uuid
+        startDate:
+          type: string
+          format: date
+          description: First day of the streak.
+        endDate:
+          type: [string, 'null']
+          format: date
+          description: Last day of the streak (null if still active).
+        length:
+          type: integer
+          format: int32
+          description: Number of consecutive completed periods.
+        isActive:
+          type: boolean
+          description: Whether the streak is currently ongoing.
+
+    StreakPage:
+      allOf:
+        - $ref: '#/components/schemas/PaginationEnvelope'
+        - type: object
+          required:
+            - data
+          properties:
+            data:
+              type: array
+              items:
+                $ref: '#/components/schemas/Streak'
+
+    # ---- Reminders -------------------------------------------
+
+    ReminderChannel:
+      type: string
+      enum: [push, email, sms]
+      description: Delivery channel for the reminder.
+
+    Reminder:
+      type: object
+      required:
+        - id
+        - habitId
+        - time
+        - channel
+        - isEnabled
+        - createdAt
+        - updatedAt
+      properties:
+        id:
+          type: string
+          format: uuid
+          readOnly: true
+        habitId:
+          type: string
+          format: uuid
+          readOnly: true
+        time:
+          type: string
+          pattern: '^([01]\d|2[0-3]):[0-5]\d$'
+          description: Local time of day to fire the reminder (HH:mm, 24-hour).
+          example: '07:30'
+        daysOfWeek:
+          type: array
+          items:
+            type: string
+            enum: [monday, tuesday, wednesday, thursday, friday, saturday, sunday]
+          description: Days on which this reminder fires. Omit for daily reminders.
+        channel:
+          $ref: '#/components/schemas/ReminderChannel'
+        message:
+          type: [string, 'null']
+          maxLength: 200
+          description: Custom reminder message (falls back to habit name if omitted).
+        isEnabled:
+          type: boolean
+          default: true
+        createdAt:
+          type: string
+          format: date-time
+          readOnly: true
+        updatedAt:
+          type: string
+          format: date-time
+          readOnly: true
+
+    ReminderCreateRequest:
+      type: object
+      required:
+        - time
+        - channel
+      properties:
+        time:
+          type: string
+          pattern: '^([01]\d|2[0-3]):[0-5]\d$'
+        daysOfWeek:
+          type: array
+          items:
+            type: string
+            enum: [monday, tuesday, wednesday, thursday, friday, saturday, sunday]
+        channel:
+          $ref: '#/components/schemas/ReminderChannel'
+        message:
+          type: [string, 'null']
+          maxLength: 200
+        isEnabled:
+          type: boolean
+          default: true
+
+    ReminderUpdateRequest:
+      type: object
+      properties:
+        time:
+          type: string
+          pattern: '^([01]\d|2[0-3]):[0-5]\d$'
+        daysOfWeek:
+          type: array
+          items:
+            type: string
+            enum: [monday, tuesday, wednesday, thursday, friday, saturday, sunday]
+        channel:
+          $ref: '#/components/schemas/ReminderChannel'
+        message:
+          type: [string, 'null']
+          maxLength: 200
+        isEnabled:
+          type: boolean
+
+    # ---- Analytics -------------------------------------------
+
+    AnalyticsSummary:
+      type: object
+      required:
+        - periodStart
+        - periodEnd
+        - totalHabits
+        - activeHabits
+        - totalCheckins
+        - completionRate
+        - longestStreak
+        - currentStreak
+      properties:
+        periodStart:
+          type: string
+          format: date
+        periodEnd:
+          type: string
+          format: date
+        totalHabits:
+          type: integer
+          format: int32
+        activeHabits:
+          type: integer
+          format: int32
+        totalCheckins:
+          type: integer
+          format: int32
+        completionRate:
+          type: number
+          format: double
+          minimum: 0
+          maximum: 1
+          description: Overall completion rate across all habits in the period.
+          example: 0.78
+        longestStreak:
+          type: integer
+          format: int32
+          description: Longest streak achieved in the period (any habit).
+        currentStreak:
+          type: integer
+          format: int32
+          description: Longest currently active streak (any habit).
+        topHabits:
+          type: array
+          description: Top 5 habits by completion rate in the period.
+          items:
+            $ref: '#/components/schemas/HabitCompletionSummary'
+
+    HabitCompletionSummary:
+      type: object
+      required:
+        - habitId
+        - habitName
+        - completionRate
+        - checkinsCount
+      properties:
+        habitId:
+          type: string
+          format: uuid
+        habitName:
+          type: string
+        completionRate:
+          type: number
+          format: double
+          minimum: 0
+          maximum: 1
+        checkinsCount:
+          type: integer
+          format: int32
+
+    HabitTrends:
+      type: object
+      required:
+        - habitId
+        - granularity
+        - dataPoints
+      properties:
+        habitId:
+          type: string
+          format: uuid
+        granularity:
+          type: string
+          enum: [daily, weekly, monthly]
+        dataPoints:
+          type: array
+          items:
+            $ref: '#/components/schemas/TrendDataPoint'
+
+    TrendDataPoint:
+      type: object
+      required:
+        - periodStart
+        - completionRate
+        - checkinsCount
+      properties:
+        periodStart:
+          type: string
+          format: date
+          description: Start date of the aggregation period.
+        completionRate:
+          type: number
+          format: double
+          minimum: 0
+          maximum: 1
+        checkinsCount:
+          type: integer
+          format: int32
+        streakAtEnd:
+          type: integer
+          format: int32
+          description: Active streak length at the end of this period.
+
+    # ---- Shared / Pagination ---------------------------------
+
+    PaginationEnvelope:
+      type: object
+      required:
+        - pagination
+      properties:
+        pagination:
+          $ref: '#/components/schemas/PaginationMeta'
+
+    PaginationMeta:
+      type: object
+      required:
+        - totalCount
+        - hasMore
+      properties:
+        totalCount:
+          type: integer
+          format: int64
+          description: Total number of items matching the query.
+        hasMore:
+          type: boolean
+          description: Whether additional pages are available.
+        nextCursor:
+          type: [string, 'null']
+          description: Opaque cursor to pass as `cursor` in the next request.
+        prevCursor:
+          type: [string, 'null']
+
+    # ---- Error -----------------------------------------------
+
+    Problem:
+      type: object
+      description: |
+        RFC 7807-compliant Problem Details object for error responses.
+      required:
+        - type
+        - title
+        - status
+        - detail
+        - traceId
+      properties:
+        type:
+          type: string
+          format: uri
+          description: URI reference identifying the problem type.
+          example: 'https://errors.habittrack.io/validation-error'
+        title:
+          type: string
+          description: Short, human-readable summary.
+          example: Validation Error
+        status:
+          type: integer
+          format: int32
+          description: HTTP status code.
+          example: 422
+        detail:
+          type: string
+          description: Human-readable explanation of this specific occurrence.
+          example: The field 'frequency' is required.
+        instance:
+          type: [string, 'null']
+          format: uri
+          description: URI reference identifying this specific occurrence.
+        traceId:
+          type: string
+          description: Distributed trace ID for support and debugging.
+          example: 4bf92f3577b34da6a3ce929d0e0e4736
+        errors:
+          type: [array, 'null']
+          description: Field-level validation errors.
+          items:
+            $ref: '#/components/schemas/FieldError'
+
+    FieldError:
+      type: object
+      required:
+        - field
+        - message
+        - code
+      properties:
+        field:
+          type: string
+          description: JSON Pointer to the offending field.
+          example: /frequency
+        message:
+          type: string
+          example: must be one of [daily, weekly, custom]
+        code:
+          type: string
+          example: ENUM_VIOLATION
+
+  # ----------------------------------------------------------
+  # RESPONSES
+  # ----------------------------------------------------------
+  responses:
+
+    BadRequest:
+      description: The request is malformed or missing required fields.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Problem'
+
+    Unauthorized:
+      description: Authentication credentials are missing or invalid.
+      headers:
+        WWW-Authenticate:
+          description: Authentication challenge.
+          schema:
+            type: string
+            example: 'Bearer realm="habittrack", error="invalid_token"'
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Problem'
+
+    Forbidden:
+      description: The caller does not have permission to access this resource.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Problem'
+
+    NotFound:
+      description: The requested resource does not exist.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Problem'
+
+    Conflict:
+      description: The request conflicts with the current state of the resource.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Problem'
+
+    PreconditionFailed:
+      description: |
+        The `If-Match` ETag does not match the current resource version.
+        Fetch the latest resource and retry.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Problem'
+
+    UnprocessableEntity:
+      description: The request body is syntactically valid but semantically incorrect.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Problem'
+
+    TooManyRequests:
+      description: Rate limit exceeded.
+      headers:
+        Retry-After:
+          description: Seconds to wait before retrying.
+          schema:
+            type: integer
+            format: int32
+          example: 30
+        X-RateLimit-Limit:
+          $ref: '#/components/headers/RateLimitLimit'
+        X-RateLimit-Remaining:
+          $ref: '#/components/headers/RateLimitRemaining'
+        X-RateLimit-Reset:
+          $ref: '#/components/headers/RateLimitReset'
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Problem'

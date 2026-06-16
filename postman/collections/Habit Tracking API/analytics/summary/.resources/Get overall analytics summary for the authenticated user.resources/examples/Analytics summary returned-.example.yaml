@@ -1,0 +1,138 @@
+$kind: http-example
+name: Analytics summary returned.
+request:
+  url: "{{baseUrl}}/analytics/summary?from=1968-02-14&to=1968-02-14"
+  method: GET
+  headers:
+    - key: Accept
+      value: application/json
+    - key: Authorization
+      value: Bearer <token>
+      description: "Added as a part of security scheme: bearer"
+  queryParams:
+    - key: from
+      value: 1968-02-14
+      description: Start of the analysis window (ISO 8601 date).
+    - key: to
+      value: 1968-02-14
+      description: End of the analysis window (ISO 8601 date, inclusive).
+response:
+  statusCode: 200
+  statusText: OK
+  headers:
+    Content-Type: application/json
+    Cache-Control: ""
+  body:
+    type: json
+    content: |-
+      {
+        "periodStart": "1965-04-18",
+        "periodEnd": "1973-06-14",
+        "totalHabits": 234,
+        "activeHabits": 6664,
+        "totalCheckins": 5712,
+        "completionRate": 0.78,
+        "longestStreak": 3062,
+        "currentStreak": 6910,
+        "topHabits": [
+          {
+            "habitId": "21223caf-076d-2cbf-e855-0e346f7c38e5",
+            "habitName": "string",
+            "completionRate": 0.9039894222223397,
+            "checkinsCount": 520
+          },
+          {
+            "habitId": "51fa0973-7c2e-86f0-74b4-d99d15d35cbd",
+            "habitName": "string",
+            "completionRate": 0.17765287367712657,
+            "checkinsCount": 1866
+          }
+        ]
+      }
+    $type: |-
+      {
+        "type": "object",
+        "properties": {
+          "periodStart": {
+            "type": "string",
+            "format": "date"
+          },
+          "periodEnd": {
+            "type": "string",
+            "format": "date"
+          },
+          "totalHabits": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "activeHabits": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "totalCheckins": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "completionRate": {
+            "type": "number",
+            "minimum": 0,
+            "maximum": 1,
+            "example": 0.78,
+            "description": "Overall completion rate across all habits in the period.",
+            "format": "double"
+          },
+          "longestStreak": {
+            "type": "integer",
+            "description": "Longest streak achieved in the period (any habit).",
+            "format": "int32"
+          },
+          "currentStreak": {
+            "type": "integer",
+            "description": "Longest currently active streak (any habit).",
+            "format": "int32"
+          },
+          "topHabits": {
+            "type": "array",
+            "description": "Top 5 habits by completion rate in the period.",
+            "items": {
+              "type": "object",
+              "properties": {
+                "habitId": {
+                  "type": "string",
+                  "format": "uuid"
+                },
+                "habitName": {
+                  "type": "string"
+                },
+                "completionRate": {
+                  "type": "number",
+                  "minimum": 0,
+                  "maximum": 1,
+                  "format": "double"
+                },
+                "checkinsCount": {
+                  "type": "integer",
+                  "format": "int32"
+                }
+              },
+              "required": [
+                "habitId",
+                "habitName",
+                "completionRate",
+                "checkinsCount"
+              ]
+            }
+          }
+        },
+        "required": [
+          "periodStart",
+          "periodEnd",
+          "totalHabits",
+          "activeHabits",
+          "totalCheckins",
+          "completionRate",
+          "longestStreak",
+          "currentStreak"
+        ]
+      }
+order: 1000
