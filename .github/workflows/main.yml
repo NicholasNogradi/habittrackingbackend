@@ -13,7 +13,7 @@ on:
 jobs:
   lint-spec:
     name: Lint OpenAPI/Swagger Spec
-    runs-on: unbuntu-latest
+    runs-on: ubuntu-latest
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
@@ -25,7 +25,7 @@ jobs:
 
       - name: Install Postman CLI
         run: |
-          curl -o- "https://dl-cli.pstmn.io/install/unix.sh" | sh
+          curl -o- "https://dl-cli.pstmn.io/install/linux64.sh" | sh
 
       - name: Verify Postman CLI version
         run: postman --version
@@ -34,4 +34,23 @@ jobs:
         run: postman login --with-api-key ${{ secrets.POSTMAN_API_KEY }}
 
       - name: Lint OpenAPI/Swagger Spec
-        run: postman spec lint postman/specs/index.yaml --fail-severity=ERROR 
+        run: postman spec lint postman/specs/index.yaml --fail-severity=ERROR
+
+  run-collection:
+    name: Run API Tests
+    runs-on: ubuntu-latest
+    needs: lint-spec
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Install Postman CLI
+        run: |
+          curl -o- "https://dl-cli.pstmn.io/install/linux64.sh" | sh
+
+      - name: Login to Postman CLI
+        run: postman login --with-api-key ${{ secrets.POSTMAN_API_KEY }}
+
+      - name: Run API tests
+        run: |
+          postman collection run "55289350-afb2f2d3-5f17-4028-a29e-71d80615a938"
