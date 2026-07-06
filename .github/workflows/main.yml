@@ -1,0 +1,37 @@
+name: Lint OpenAPI Spec + Run Collection
+
+on:
+  push:
+    branches:
+      - main
+      - 'feature/*'
+  pull_request:
+    branches:
+      - main
+  workflow_dispatch:
+
+jobs:
+  lint-spec:
+    name: Lint OpenAPI/Swagger Spec
+    runs-on: unbuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Install Postman CLI
+        run: |
+          curl -o- "https://dl-cli.pstmn.io/install/unix.sh" | sh
+
+      - name: Verify Postman CLI version
+        run: postman --version
+
+      - name: Login to Postman
+        run: postman login --with-api-key ${{ secrets.POSTMAN_API_KEY }}
+
+      - name: Lint OpenAPI/Swagger Spec
+        run: postman spec lint postman/specs/index.yaml --fail-severity=ERROR 
