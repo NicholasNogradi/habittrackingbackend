@@ -1,5 +1,0 @@
-$kind: http-request
-name: health
-url: "{{baseUrl}}/health"
-method: POST
-order: 3397006626129100

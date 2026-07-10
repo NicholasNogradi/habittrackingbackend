@@ -1,0 +1,36 @@
+$kind: http-request
+description: "Generated from cURL: curl -X POST {{baseUrl}}/habits -H \"Content-Type: application/json\" -H \"Accept: application/json\" -H \"Authorization: Bearer {{accessToken}}\" -d '{\"name\":\"Invalid Habit\",\"frequency\":\"every_other_tuesday\",\"targetCount\":1}'"
+url: "{{baseUrl}}/habits"
+method: POST
+headers:
+  Content-Type: application/json
+  Accept: application/json
+  Authorization: Bearer {{accessToken}}
+body:
+  type: json
+  content: '{"name":"Invalid Habit","frequency":"every_other_tuesday","targetCount":1}'
+scripts:
+  - type: afterResponse
+    code: |-
+      pm.test('Status code is 400 or 422 for invalid frequency', function () {
+          pm.expect(pm.response.code).to.be.oneOf([
+              400,
+              422
+          ]);
+      })
+
+      pm.test('Response time is under 2000ms', function () {
+          pm.expect(pm.response.responseTime).to.be.below(2000);
+      })
+
+      pm.test('Error response has error field', function () {
+          const json = pm.response.json();
+          pm.expect(json).to.have.property('error');
+      })
+
+      pm.test('No habit was created', function () {
+          const json = pm.response.json();
+          pm.expect(json).to.not.have.property('id');
+      })
+    language: text/javascript
+order: 6000

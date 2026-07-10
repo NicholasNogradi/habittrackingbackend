@@ -2,6 +2,10 @@ $kind: http-request
 url: "{{baseUrl}}/users/me"
 method: GET
 headers:
-  Accept: application/json
+  - key: Accept
+    value: application/json
+  - key: ""
+    value: ""
+    disabled: true
 examples: ./.resources/Get the authenticated user's profile.resources/examples
 order: 1000

@@ -1,0 +1,27 @@
+$kind: http-request
+description: 'Generated from cURL: curl -X GET "{{baseUrl}}/analytics/summary?from=2025-01-01&to=2025-12-31" -H "Accept: application/json" -H "Authorization: Bearer {{smokeAccessToken}}"'
+url: "{{baseUrl}}/analytics/summary?from=2025-01-01&to=2025-12-31"
+method: GET
+headers:
+  Accept: application/json
+  Authorization: Bearer {{smokeAccessToken}}
+queryParams:
+  from: 2025-01-01
+  to: 2025-12-31
+scripts:
+  - type: afterResponse
+    code: |-
+      pm.test("Status code is 200", function () {
+          pm.response.to.have.status(200);
+      });
+      pm.test("Response time is under 2000ms", function () {
+          pm.expect(pm.response.responseTime).to.be.below(2000);
+      });
+      pm.test("Response body is not empty", function () {
+          pm.expect(pm.response.text()).to.not.be.empty;
+      });
+      pm.test("Response is valid JSON", function () {
+          pm.response.to.be.json;
+      });
+    language: text/javascript
+order: 7000

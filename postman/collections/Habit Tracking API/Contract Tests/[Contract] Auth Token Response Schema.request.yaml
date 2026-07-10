@@ -1,0 +1,41 @@
+$kind: http-request
+description: 'Generated from cURL: curl -X POST {{baseUrl}}/auth/token -H "Content-Type: application/x-www-form-urlencoded" -H "Accept: application/json" --data-urlencode "grant_type=password" --data-urlencode "username={{username}}" --data-urlencode "password={{password}}"'
+url: "{{baseUrl}}/auth/token"
+method: POST
+headers:
+  Content-Type: application/x-www-form-urlencoded
+  Accept: application/json
+body:
+  type: urlencoded
+  content:
+    grant_type: password
+    username: "{{username}}"
+    password: "{{password}}"
+scripts:
+  - type: afterResponse
+    code: |-
+      pm.test("Status code is 200", function () {
+          pm.response.to.have.status(200);
+      });
+      pm.test("Token response matches contract schema", function () {
+          const json = pm.response.json();
+          // Required fields
+          pm.expect(json).to.have.property("access_token").that.is.a("string");
+          pm.expect(json).to.have.property("token_type").that.is.a("string");
+          pm.expect(json).to.have.property("expires_in").that.is.a("number");
+          pm.expect(json).to.have.property("refresh_token").that.is.a("string");
+          // token_type must be "Bearer"
+          pm.expect(json.token_type.toLowerCase()).to.eql("bearer");
+          // expires_in must be positive
+          pm.expect(json.expires_in).to.be.above(0);
+      });
+      pm.test("No unexpected sensitive fields exposed", function () {
+          const json = pm.response.json();
+          pm.expect(json).to.not.have.property("password");
+          pm.expect(json).to.not.have.property("client_secret");
+      });
+      if (pm.response.code === 200) {
+          pm.collectionVariables.set("contractAccessToken", pm.response.json().access_token);
+      }
+    language: text/javascript
+order: 1000

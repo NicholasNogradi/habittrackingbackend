@@ -34,6 +34,7 @@ response:
       value: application/problem+json
     - key: Retry-After
       value: "30"
+      disabled: false
       description: Seconds to wait before retrying.
       $type: |-
         {
@@ -47,10 +48,13 @@ response:
         }
     - key: X-RateLimit-Limit
       value: ""
+      disabled: false
     - key: X-RateLimit-Remaining
       value: ""
+      disabled: false
     - key: X-RateLimit-Reset
       value: ""
+      disabled: false
   body:
     type: json
     content: |-

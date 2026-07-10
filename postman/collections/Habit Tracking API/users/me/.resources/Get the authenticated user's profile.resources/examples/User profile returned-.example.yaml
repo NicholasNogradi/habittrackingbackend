@@ -9,6 +9,9 @@ request:
     - key: Authorization
       value: Bearer <token>
       description: "Added as a part of security scheme: bearer"
+    - key: ""
+      value: ""
+      disabled: true
 response:
   statusCode: 200
   statusText: OK
