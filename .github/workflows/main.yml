@@ -13,7 +13,7 @@ on:
 jobs:
   lint-spec:
     name: Lint OpenAPI/Swagger Spec
-    runs-on: unbuntu-latest
+    runs-on: ubuntu-latest
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
@@ -54,7 +54,7 @@ jobs:
       - name: Start the application
         run: npm start &
 
-        -name: Wait for the application to be ready
+      - name: Wait for the application to be ready
         run: |
           echo "Waiting for the application to be ready..."
           for i in {1..30}; do
