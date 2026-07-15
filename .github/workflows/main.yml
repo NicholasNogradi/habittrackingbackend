@@ -39,6 +39,7 @@ jobs:
   run-collection:
     name: Run Postman Collection
     runs-on: ubuntu-latest
+    needs: lint-spec
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
@@ -58,7 +59,7 @@ jobs:
         run: |
           echo "Waiting for the application to be ready..."
           for i in {1..30}; do
-            if curl -s http://localhost:8080/v1/health; then
+            if curl -s http://localhost:8080/health; then
               echo "Application is ready!"
               break
             fi
