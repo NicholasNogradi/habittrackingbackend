@@ -21,7 +21,7 @@ jobs:
       - name: Set up Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: '20'
+          node-version: '24.18.0'
 
       - name: Install Postman CLI
         run: |
@@ -35,3 +35,46 @@ jobs:
 
       - name: Lint OpenAPI/Swagger Spec
         run: postman spec lint postman/specs/index.yaml --fail-severity=ERROR 
+  
+  run-collection:
+    name: Run Postman Collection
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '24.18.0'
+
+      - name: Install Dependencies
+        run: npm install
+
+      - name: Start the application
+        run: npm start &
+
+        -name: Wait for the application to be ready
+        run: |
+          echo "Waiting for the application to be ready..."
+          for i in {1..30}; do
+            if curl -s http://localhost:8080/v1/health; then
+              echo "Application is ready!"
+              break
+            fi
+            echo "Waiting for the application to be ready... ($i/30)"
+            sleep 2
+          done
+          echo "Server failed to start"
+          exit 1
+
+      - name: Install Postman CLI
+        run: |
+          curl -o- "https://dl-cli.pstmn.io/install/linux64.sh" | sh
+
+      - name: Login to Postman CLI
+        run: postman login --with-api-key ${{ secrets.POSTMAN_API_KEY }}
+      
+      - name: Run API tests
+        run: |
+          postman collection run "55289350-afb2f2d3-5f17-4028-a29e-71d80615a938" -e "55289350-7472042b-71b7-42b0-beb5-defc52098080"
