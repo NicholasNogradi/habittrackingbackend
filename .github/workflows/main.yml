@@ -34,7 +34,37 @@ jobs:
         run: postman login --with-api-key ${{ secrets.POSTMAN_API_KEY }}
 
       - name: Lint OpenAPI/Swagger Spec
-        run: postman spec lint postman/specs/index.yaml --fail-severity=ERROR 
+        run: postman spec lint postman/specs/index.yaml --fail-severity=ERROR
+    
+  diff-spec:
+    name: Compare Feature Spec With Main
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout feature branch
+        uses: actions/checkout@v4
+        with:
+          # In pull requests, check out the feature branch itself rather
+          # than GitHub's synthetic merge commit.
+          ref: ${{ github.head_ref || github.ref }}
+          fetch-depth: 0
+
+      - name: Fetch main branch
+        run: git fetch origin main
+
+      - name: Extract main branch OpenAPI spec
+        run: |
+          mkdir -p .openapi-diff/main
+          git show origin/main:postman/specs/index.yaml \
+            > .openapi-diff/main/index.yaml
+
+      - name: Compare main with feature branch
+        run: |
+          docker run --rm \
+            -v "$GITHUB_WORKSPACE:/workspace:ro" \
+            openapitools/openapi-diff:2.1.7 \
+            --fail-on-incompatible \
+            /workspace/.openapi-diff/main/index.yaml \
+            /workspace/postman/specs/index.yaml
   
   run-collection:
     name: Run Postman Collection
