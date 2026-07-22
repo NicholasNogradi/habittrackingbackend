@@ -6,12 +6,13 @@ on:
       - main
       - 'feature/*'
   pull_request:
-    branches:
-      - main
+    branches: [ main ]
   workflow_dispatch:
 
+permissions:
+  contents: read
+
 jobs:
-  
   diff-spec:
     name: Compare Feature Spec With Main
     runs-on: ubuntu-latest
@@ -21,7 +22,8 @@ jobs:
         with:
           # In pull requests, check out the feature branch itself rather
           # than GitHub's synthetic merge commit.
-          ref: ${{ github.head_ref || github.ref }}
+          repository: ${{ github.event.pull_request.head.repo.full_name || github.repository }}
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
           fetch-depth: 0
 
       - name: Fetch main branch
@@ -44,6 +46,9 @@ jobs:
 
   lint-spec:
     name: Lint OpenAPI/Swagger Spec
+    if: >-
+      github.event_name != 'pull_request' ||
+      github.event.pull_request.head.repo.full_name == github.repository
     runs-on: ubuntu-latest
     needs: diff-spec
     steps:
@@ -70,6 +75,9 @@ jobs:
   
   run-collection:
     name: Run Postman Collection
+    if: >-
+      github.event_name != 'pull_request' ||
+      github.event.pull_request.head.repo.full_name == github.repository
     runs-on: ubuntu-latest
     needs: 
       - lint-spec
@@ -84,7 +92,7 @@ jobs:
           node-version: '24.18.0'
 
       - name: Install Dependencies
-        run: npm install
+        run: npm ci
 
       - name: Start the application
         run: npm start &
@@ -118,3 +126,24 @@ jobs:
       - name: Run API tests
         run: |
           postman collection run "55289350-afb2f2d3-5f17-4028-a29e-71d80615a938" -e "55289350-7472042b-71b7-42b0-beb5-defc52098080"
+
+  pr_comment:
+    name: Comment on Pull Request
+    if: >-
+      github.event_name == 'pull_request' &&
+      github.event.pull_request.head.repo.full_name == github.repository
+    runs-on: ubuntu-latest
+    needs: run-collection
+    permissions:
+      issues: write
+    steps:
+      - name: Add PR Comment
+        uses: actions/github-script@v7
+        with:
+          script: |
+            github.rest.issues.createComment({
+              issue_number: context.issue.number,
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              body: 'Automated tests have completed successfully. The Postman collection has been run against the application, and all tests passed. ✅'
+            })
