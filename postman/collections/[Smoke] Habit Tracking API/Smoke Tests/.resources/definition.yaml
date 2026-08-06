@@ -1,0 +1,13 @@
+$kind: collection
+description: |-
+  This folder contains lightweight **smoke tests** designed to verify that the core API surface is reachable and returning expected responses after a deployment or environment change. These tests are intentionally minimal and fast — they are not exhaustive functional tests, but rather a quick sanity check to confirm the API is up and behaving correctly end-to-end.
+
+  Each request targets a key area of the Habit Tracking API to ensure nothing is critically broken before deeper testing begins.
+
+  **Areas covered:**
+  - **Authentication** — Obtain an access token via `/auth/token`
+  - **User Profile** — Retrieve the authenticated user's profile (`/users/me`)
+  - **Habits** — List habits, create a new habit, and fetch a habit by ID (`/habits`)
+  - **Categories** — List available categories (`/categories`)
+  - **Analytics** — Retrieve the analytics summary (`/analytics/summary`)
+order: 1000

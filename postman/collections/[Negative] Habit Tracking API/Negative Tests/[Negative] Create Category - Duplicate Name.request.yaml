@@ -1,0 +1,36 @@
+$kind: http-request
+description: "Generated from cURL: curl -X POST {{baseUrl}}/categories -H \"Content-Type: application/json\" -H \"Accept: application/json\" -H \"Authorization: Bearer {{accessToken}}\" -d '{\"name\":\"Health\",\"color\":\"#FF5733\"}'"
+url: "{{baseUrl}}/categories"
+method: POST
+headers:
+  Content-Type: application/json
+  Accept: application/json
+  Authorization: Bearer {{accessToken}}
+body:
+  type: json
+  content: '{"name":"Health","color":"#FF5733"}'
+scripts:
+  - type: afterResponse
+    code: |-
+      pm.test('Status code is 409 for duplicate category', function () {
+          pm.response.to.have.status(409);
+      })
+
+      pm.test('Response time is under 2000ms', function () {
+          pm.expect(pm.response.responseTime).to.be.below(2000);
+      })
+
+      pm.test('Error response has error field', function () {
+          const json = pm.response.json();
+          pm.expect(json).to.have.property('error');
+      })
+
+      pm.test('Conflict error message is present', function () {
+          const body = pm.response.text().toLowerCase();
+          pm.expect(body).to.satisfy(function (b) {
+              return b.includes('conflict') || b.includes('already exists') || b.includes('duplicate');
+          });
+      })
+    language: text/javascript
+settings: {}
+order: 7000

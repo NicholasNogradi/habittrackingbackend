@@ -7,7 +7,6 @@ headers:
     description: |
       ETag value for optimistic concurrency control. If the resource has
       changed since the ETag was retrieved, the server returns **412**.
-    $type: string
   - key: Content-Type
     value: application/json
   - key: Accept
@@ -16,19 +15,6 @@ pathVariables:
   - key: categoryId
     value: 1c3b4d12-89ab-4def-0123-456789abcdef
     description: Unique identifier of the category.
-    $type: |-
-      {
-        "type": "object",
-        "properties": {
-          "value": {
-            "type": "string",
-            "format": "uuid"
-          }
-        },
-        "required": [
-          "value"
-        ]
-      }
 body:
   type: json
   content: |-
@@ -38,28 +24,6 @@ body:
       "color": "#109Ab7",
       "icon": "string"
     }
-  $type: |-
-    {
-      "type": "object",
-      "properties": {
-        "name": {
-          "type": "string",
-          "minLength": 1,
-          "maxLength": 80
-        },
-        "description": {
-          "type": "string",
-          "maxLength": 500
-        },
-        "color": {
-          "type": "string",
-          "pattern": "^#[0-9A-Fa-f]{6}$"
-        },
-        "icon": {
-          "type": "string",
-          "maxLength": 50
-        }
-      }
-    }
+settings: {}
 examples: ./.resources/Update a category.resources/examples
 order: 2000

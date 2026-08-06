@@ -7,7 +7,6 @@ headers:
     description: |
       ETag value for optimistic concurrency control. If the resource has
       changed since the ETag was retrieved, the server returns **412**.
-    $type: string
   - key: Content-Type
     value: application/json
   - key: Accept
@@ -22,33 +21,6 @@ body:
       "locale": "string",
       "weekStartDay": "monday"
     }
-  $type: |-
-    {
-      "type": "object",
-      "properties": {
-        "displayName": {
-          "type": "string",
-          "minLength": 1,
-          "maxLength": 100
-        },
-        "avatarUrl": {
-          "type": "string",
-          "format": "uri"
-        },
-        "timezone": {
-          "type": "string"
-        },
-        "locale": {
-          "type": "string"
-        },
-        "weekStartDay": {
-          "type": "string",
-          "enum": [
-            "monday",
-            "sunday"
-          ]
-        }
-      }
-    }
+settings: {}
 examples: ./.resources/Update the authenticated user's profile.resources/examples
 order: 2000

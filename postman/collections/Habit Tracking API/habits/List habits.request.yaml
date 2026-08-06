@@ -8,92 +8,21 @@ queryParams:
   - key: limit
     value: "20"
     description: Maximum number of items to return per page (1–100).
-    $type: |-
-      {
-        "type": "object",
-        "properties": {
-          "value": {
-            "type": "integer",
-            "format": "int32",
-            "default": 20,
-            "minimum": 1,
-            "maximum": 100
-          }
-        }
-      }
   - key: cursor
     value: eyJpZCI6IjEyMyIsInRzIjoiMjAyNS0wMS0wMVQwMDowMDowMFoifQ==
     description: Opaque pagination cursor returned by the previous page response.
-    $type: string
   - key: categoryId
     value: caf5bb04-4900-a698-218c-ecf5619a92a7
     description: Filter habits by category.
-    $type: |-
-      {
-        "type": "object",
-        "properties": {
-          "value": {
-            "type": "string",
-            "format": "uuid"
-          }
-        }
-      }
   - key: status
     value: active
     description: Filter by habit status.
-    $type: |-
-      {
-        "type": "object",
-        "properties": {
-          "value": {
-            "description": "Lifecycle status of a habit.",
-            "type": "string",
-            "enum": [
-              "active",
-              "paused",
-              "archived"
-            ]
-          }
-        }
-      }
   - key: frequency
     value: daily
     description: Filter by recurrence frequency.
-    $type: |-
-      {
-        "type": "object",
-        "properties": {
-          "value": {
-            "description": "How often the habit should be completed.",
-            "type": "string",
-            "enum": [
-              "daily",
-              "weekly",
-              "custom"
-            ]
-          }
-        }
-      }
   - key: sort
     value: -createdAt
     description: Field to sort by (prefix with `-` for descending).
-    $type: |-
-      {
-        "type": "object",
-        "properties": {
-          "value": {
-            "type": "string",
-            "default": "-createdAt",
-            "enum": [
-              "name",
-              "-name",
-              "createdAt",
-              "-createdAt",
-              "streak",
-              "-streak"
-            ]
-          }
-        }
-      }
+settings: {}
 examples: ./.resources/List habits.resources/examples
 order: 2000

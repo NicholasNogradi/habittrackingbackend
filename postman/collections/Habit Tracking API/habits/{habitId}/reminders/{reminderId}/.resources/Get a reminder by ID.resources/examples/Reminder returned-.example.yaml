@@ -38,49 +38,4 @@ response:
         ],
         "message": "string"
       }
-    $type: |-
-      {
-        "type": "object",
-        "properties": {
-          "time": {
-            "type": "string",
-            "pattern": "^([01]\\d|2[0-3]):[0-5]\\d$",
-            "example": "07:30",
-            "description": "Local time of day to fire the reminder (HH:mm, 24-hour)."
-          },
-          "daysOfWeek": {
-            "type": "array",
-            "description": "Days on which this reminder fires. Omit for daily reminders.",
-            "items": {
-              "type": "string"
-            }
-          },
-          "channel": {
-            "type": "string",
-            "enum": [
-              "push",
-              "email",
-              "sms"
-            ],
-            "description": "Delivery channel for the reminder."
-          },
-          "message": {
-            "type": "string",
-            "maxLength": 200,
-            "description": "Custom reminder message (falls back to habit name if omitted)."
-          },
-          "isEnabled": {
-            "type": "boolean"
-          }
-        },
-        "required": [
-          "id",
-          "habitId",
-          "time",
-          "channel",
-          "isEnabled",
-          "createdAt",
-          "updatedAt"
-        ]
-      }
 order: 1000

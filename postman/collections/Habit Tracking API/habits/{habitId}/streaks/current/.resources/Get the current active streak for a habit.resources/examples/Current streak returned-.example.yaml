@@ -29,40 +29,4 @@ response:
         "isActive": true,
         "endDate": "1986-02-11"
       }
-    $type: |-
-      {
-        "type": "object",
-        "properties": {
-          "habitId": {
-            "type": "string",
-            "format": "uuid"
-          },
-          "startDate": {
-            "type": "string",
-            "description": "First day of the streak.",
-            "format": "date"
-          },
-          "endDate": {
-            "type": "string",
-            "description": "Last day of the streak (null if still active).",
-            "format": "date"
-          },
-          "length": {
-            "type": "integer",
-            "description": "Number of consecutive completed periods.",
-            "format": "int32"
-          },
-          "isActive": {
-            "type": "boolean",
-            "description": "Whether the streak is currently ongoing."
-          }
-        },
-        "required": [
-          "id",
-          "habitId",
-          "startDate",
-          "length",
-          "isActive"
-        ]
-      }
 order: 1000

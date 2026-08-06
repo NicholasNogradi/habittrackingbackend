@@ -1,0 +1,37 @@
+$kind: http-request
+url: "{{baseUrl}}/auth/register"
+method: POST
+body:
+  type: json
+  content: |-
+    {
+        "email": "{{$randomEmail}}",
+        "password": "{{$randomPassword}}",
+        "displayName": "{{$randomUserName}}"
+    }
+auth:
+  type: noauth
+scripts:
+  - type: afterResponse
+    code: |-
+      const response_body = pm.response.json();
+      const request_body = JSON.parse(pm.request.body.raw);
+
+      const access_token = response_body.access_token;
+      const email = request_body.email;
+      const password = request_body.password
+
+      // console.log(access_token)
+      console.log(request_body)
+      console.log(email)
+
+      pm.test("Successful POST request", function () {
+          pm.expect(pm.response.code).to.be.oneOf([201, 202]);
+      });
+
+      pm.collectionVariables.set("access_token", access_token);
+      pm.collectionVariables.set("username", email)
+      pm.collectionVariables.set("password", password)
+    language: text/javascript
+settings: {}
+order: 1000

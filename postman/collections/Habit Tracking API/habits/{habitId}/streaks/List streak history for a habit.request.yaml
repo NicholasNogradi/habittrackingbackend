@@ -7,39 +7,13 @@ queryParams:
   - key: limit
     value: "20"
     description: Maximum number of items to return per page (1–100).
-    $type: |-
-      {
-        "type": "object",
-        "properties": {
-          "value": {
-            "type": "integer",
-            "format": "int32",
-            "default": 20,
-            "minimum": 1,
-            "maximum": 100
-          }
-        }
-      }
   - key: cursor
     value: eyJpZCI6IjEyMyIsInRzIjoiMjAyNS0wMS0wMVQwMDowMDowMFoifQ==
     description: Opaque pagination cursor returned by the previous page response.
-    $type: string
 pathVariables:
   - key: habitId
     value: 3fa85f64-5717-4562-b3fc-2c963f66afa6
     description: Unique identifier of the habit.
-    $type: |-
-      {
-        "type": "object",
-        "properties": {
-          "value": {
-            "type": "string",
-            "format": "uuid"
-          }
-        },
-        "required": [
-          "value"
-        ]
-      }
+settings: {}
 examples: ./.resources/List streak history for a habit.resources/examples
 order: 2000

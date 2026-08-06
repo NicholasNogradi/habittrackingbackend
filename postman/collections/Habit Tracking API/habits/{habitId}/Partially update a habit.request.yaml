@@ -7,7 +7,6 @@ headers:
     description: |
       ETag value for optimistic concurrency control. If the resource has
       changed since the ETag was retrieved, the server returns **412**.
-    $type: string
   - key: Content-Type
     value: application/json
   - key: Accept
@@ -16,19 +15,6 @@ pathVariables:
   - key: habitId
     value: 3fa85f64-5717-4562-b3fc-2c963f66afa6
     description: Unique identifier of the habit.
-    $type: |-
-      {
-        "type": "object",
-        "properties": {
-          "value": {
-            "type": "string",
-            "format": "uuid"
-          }
-        },
-        "required": [
-          "value"
-        ]
-      }
 body:
   type: json
   content: |-
@@ -49,73 +35,6 @@ body:
       "status": "paused",
       "endDate": "1991-09-07"
     }
-  $type: |-
-    {
-      "type": "object",
-      "properties": {
-        "name": {
-          "type": "string",
-          "minLength": 1,
-          "maxLength": 200
-        },
-        "description": {
-          "type": "string",
-          "maxLength": 1000
-        },
-        "categoryId": {
-          "type": "string",
-          "format": "uuid"
-        },
-        "color": {
-          "type": "string",
-          "pattern": "^#[0-9A-Fa-f]{6}$"
-        },
-        "icon": {
-          "type": "string",
-          "maxLength": 50
-        },
-        "frequency": {
-          "type": "string",
-          "enum": [
-            "daily",
-            "weekly",
-            "custom"
-          ],
-          "description": "How often the habit should be completed."
-        },
-        "targetDays": {
-          "type": "array",
-          "items": {
-            "type": "string"
-          }
-        },
-        "targetCount": {
-          "type": "integer",
-          "minimum": 1,
-          "format": "int32"
-        },
-        "unit": {
-          "type": "string",
-          "maxLength": 50
-        },
-        "targetValue": {
-          "type": "number",
-          "format": "double"
-        },
-        "status": {
-          "type": "string",
-          "enum": [
-            "active",
-            "paused",
-            "archived"
-          ],
-          "description": "Lifecycle status of a habit."
-        },
-        "endDate": {
-          "type": "string",
-          "format": "date"
-        }
-      }
-    }
+settings: {}
 examples: ./.resources/Partially update a habit.resources/examples
 order: 6000

@@ -33,48 +33,4 @@ response:
         "locale": "en-US",
         "weekStartDay": "monday"
       }
-    $type: |-
-      {
-        "type": "object",
-        "properties": {
-          "email": {
-            "type": "string",
-            "format": "email"
-          },
-          "displayName": {
-            "type": "string",
-            "minLength": 1,
-            "maxLength": 100
-          },
-          "avatarUrl": {
-            "type": "string",
-            "format": "uri"
-          },
-          "timezone": {
-            "type": "string",
-            "example": "America/New_York",
-            "description": "IANA timezone string."
-          },
-          "locale": {
-            "type": "string",
-            "example": "en-US",
-            "description": "BCP 47 language tag."
-          },
-          "weekStartDay": {
-            "type": "string",
-            "enum": [
-              "monday",
-              "sunday"
-            ],
-            "description": "First day of the user's calendar week."
-          }
-        },
-        "required": [
-          "id",
-          "email",
-          "displayName",
-          "createdAt",
-          "updatedAt"
-        ]
-      }
 order: 1000

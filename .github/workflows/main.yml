@@ -123,9 +123,17 @@ jobs:
       - name: Login to Postman CLI
         run: postman login --with-api-key ${{ secrets.POSTMAN_API_KEY }}
       
-      - name: Run API tests
+      - name: Run Smoke tests
         run: |
-          postman collection run "55289350-afb2f2d3-5f17-4028-a29e-71d80615a938" -e "55289350-7472042b-71b7-42b0-beb5-defc52098080"
+          postman collection run "55289350-1e41dc11-8477-412e-af26-d4487bb3984e" -e "55289350-7472042b-71b7-42b0-beb5-defc52098080"
+
+      - name: Run Negative tests
+        run: |
+          postman collection run "55289350-27eae2c3-fa49-48e2-a534-142f89121a40" -e "55289350-7472042b-71b7-42b0-beb5-defc52098080"
+      
+      - name: Run Contract tests
+        run: |
+          postman collection run "55289350-b862964b-1b8d-4d6a-88fc-d3f01d57dad4" -e "55289350-7472042b-71b7-42b0-beb5-defc52098080"
 
   pr_comment:
     name: Comment on Pull Request

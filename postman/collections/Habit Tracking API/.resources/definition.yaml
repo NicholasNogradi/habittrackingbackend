@@ -50,8 +50,20 @@ variables:
     secret: true
   - key: bearer_token_029x
     secret: true
+  - key: smokeAccessToken
+    value: ""
+    secret: false
+  - key: username
+    value: ""
+    secret: false
+  - key: password
+    value: ""
+    secret: false
+  - key: smokeHabitId
+    value: ""
+    secret: false
 auth:
-  - id: 61d06aab-1cb3-4c14-8436-91bf78d6d0c4
+  - id: 41dc523b-6b56-477f-a9d8-c49c44785143
     type: bearer
     name: bearer auth
     credentials:

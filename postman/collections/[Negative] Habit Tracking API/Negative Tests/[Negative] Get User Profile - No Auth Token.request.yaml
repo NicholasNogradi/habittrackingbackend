@@ -1,0 +1,28 @@
+$kind: http-request
+description: 'Generated from cURL: curl -X GET {{baseUrl}}/users/me -H "Accept: application/json"'
+url: "{{baseUrl}}/users/me"
+method: GET
+headers:
+  Accept: application/json
+scripts:
+  - type: afterResponse
+    code: |-
+      pm.test('Status code is 401 when no auth token provided', function () {
+          pm.response.to.have.status(401);
+      })
+
+      pm.test('Response time is under 2000ms', function () {
+          pm.expect(pm.response.responseTime).to.be.below(2000);
+      })
+
+      pm.test('Error response body is not empty', function () {
+          pm.expect(pm.response.text()).to.not.be.empty;
+      })
+
+      pm.test('Error response has error field', function () {
+          const json = pm.response.json();
+          pm.expect(json).to.have.property('error');
+      })
+    language: text/javascript
+settings: {}
+order: 3000

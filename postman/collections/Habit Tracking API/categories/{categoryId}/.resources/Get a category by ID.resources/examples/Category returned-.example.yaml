@@ -32,38 +32,4 @@ response:
         "icon": "dumbbell",
         "habitCount": 1020
       }
-    $type: |-
-      {
-        "type": "object",
-        "properties": {
-          "name": {
-            "type": "string",
-            "minLength": 1,
-            "maxLength": 80,
-            "example": "Health & Fitness"
-          },
-          "description": {
-            "type": "string",
-            "maxLength": 500
-          },
-          "color": {
-            "type": "string",
-            "pattern": "^#[0-9A-Fa-f]{6}$",
-            "example": "#4CAF50",
-            "description": "Hex colour code for UI theming."
-          },
-          "icon": {
-            "type": "string",
-            "maxLength": 50,
-            "example": "dumbbell",
-            "description": "Icon identifier (e.g. icon library slug)."
-          }
-        },
-        "required": [
-          "id",
-          "name",
-          "createdAt",
-          "updatedAt"
-        ]
-      }
 order: 1000

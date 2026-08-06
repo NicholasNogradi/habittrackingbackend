@@ -7,5 +7,6 @@ url: "{{baseUrl}}/users/me"
 method: DELETE
 headers:
   Accept: application/problem+json
+settings: {}
 examples: ./.resources/Delete (close) the authenticated user's account.resources/examples
 order: 3000

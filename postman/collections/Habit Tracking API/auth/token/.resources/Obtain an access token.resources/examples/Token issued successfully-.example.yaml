@@ -49,40 +49,4 @@ response:
         "refresh_token": "string",
         "scope": "habits:read habits:write checkins:write"
       }
-    $type: |-
-      {
-        "type": "object",
-        "properties": {
-          "access_token": {
-            "type": "string",
-            "description": "JWT access token."
-          },
-          "token_type": {
-            "type": "string",
-            "enum": [
-              "Bearer"
-            ]
-          },
-          "expires_in": {
-            "type": "integer",
-            "example": 3600,
-            "description": "Lifetime of the access token in seconds.",
-            "format": "int32"
-          },
-          "refresh_token": {
-            "type": "string",
-            "description": "Opaque refresh token (only returned for `password` and `authorization_code` grants)."
-          },
-          "scope": {
-            "type": "string",
-            "example": "habits:read habits:write checkins:write",
-            "description": "Space-delimited list of scopes granted."
-          }
-        },
-        "required": [
-          "access_token",
-          "token_type",
-          "expires_in"
-        ]
-      }
 order: 1000
