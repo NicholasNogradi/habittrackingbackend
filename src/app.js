@@ -7,6 +7,7 @@ import { errorHandler, notFoundHandler } from './middleware/errorHandler.js';
 
 export function createApp() {
   const app = express();
+  const allowedOrigins = ['http://localhost:3000', 'http://127.0.0.1:3000'];
 
   app.disable('x-powered-by');
   app.set('trust proxy', true);
@@ -16,6 +17,29 @@ export function createApp() {
     req.traceId = crypto.randomBytes(16).toString('hex');
     next();
   });
+
+  // CORS (for local development only).
+  app.use((req, res, next) => {
+  const origin = req.headers.origin;
+
+  if (origin && allowedOrigins.includes(origin)) {
+    res.setHeader('Access-Control-Allow-Origin', origin);
+    res.setHeader('Vary', 'Origin');
+  }
+
+  if (req.method === 'OPTIONS') {
+    res.setHeader('Access-Control-Allow-Methods', 'GET,HEAD,PUT,PATCH,POST,DELETE,OPTIONS');
+    res.setHeader(
+      'Access-Control-Allow-Headers',
+      req.headers['access-control-request-headers'] || 'Content-Type, Authorization'
+    );
+    res.setHeader('Access-Control-Max-Age', '86400');
+    res.setHeader('Access-Control-Allow-Credentials', 'true');
+    return res.sendStatus(204);
+  }
+
+  next();
+});
 
   // Body parsers — JSON and form-encoded (the token endpoint accepts form data).
   app.use(express.json({ limit: '1mb' }));

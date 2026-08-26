@@ -7,16 +7,6 @@ headers:
     description: |
       Client-generated UUID to make the request idempotent.
       The same key within 24 hours returns the original response.
-    $type: |-
-      {
-        "type": "object",
-        "properties": {
-          "value": {
-            "type": "string",
-            "format": "uuid"
-          }
-        }
-      }
   - key: Content-Type
     value: application/json
   - key: Accept
@@ -41,72 +31,6 @@ body:
       "startDate": "1965-07-26",
       "endDate": "2024-01-16"
     }
-  $type: |-
-    {
-      "type": "object",
-      "properties": {
-        "name": {
-          "type": "string",
-          "minLength": 1,
-          "maxLength": 200
-        },
-        "description": {
-          "type": "string",
-          "maxLength": 1000
-        },
-        "categoryId": {
-          "type": "string",
-          "format": "uuid"
-        },
-        "color": {
-          "type": "string",
-          "pattern": "^#[0-9A-Fa-f]{6}$"
-        },
-        "icon": {
-          "type": "string",
-          "maxLength": 50
-        },
-        "frequency": {
-          "type": "string",
-          "enum": [
-            "daily",
-            "weekly",
-            "custom"
-          ],
-          "description": "How often the habit should be completed."
-        },
-        "targetDays": {
-          "type": "array",
-          "items": {
-            "type": "string"
-          }
-        },
-        "targetCount": {
-          "type": "integer",
-          "minimum": 1,
-          "format": "int32"
-        },
-        "unit": {
-          "type": "string",
-          "maxLength": 50
-        },
-        "targetValue": {
-          "type": "number",
-          "format": "double"
-        },
-        "startDate": {
-          "type": "string",
-          "format": "date"
-        },
-        "endDate": {
-          "type": "string",
-          "format": "date"
-        }
-      },
-      "required": [
-        "name",
-        "frequency"
-      ]
-    }
+settings: {}
 examples: ./.resources/Create a habit.resources/examples
 order: 3000

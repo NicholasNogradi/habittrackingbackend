@@ -86,7 +86,24 @@ tags:
 # PATHS
 # ============================================================
 paths:
+  # ----------------------------------------------------------
+  # HEALTH CHECK
+  # ----------------------------------------------------------
 
+  /health:
+    get:
+      operationId: getHealthStatus
+      summary: Get status of service
+      description: |
+        Used to get status of running service for integrations that rely on the endpoints
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: string
+                example: "Success"
   # ----------------------------------------------------------
   # AUTH
   # ----------------------------------------------------------

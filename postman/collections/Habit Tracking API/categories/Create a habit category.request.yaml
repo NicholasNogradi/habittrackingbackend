@@ -7,16 +7,6 @@ headers:
     description: |
       Client-generated UUID to make the request idempotent.
       The same key within 24 hours returns the original response.
-    $type: |-
-      {
-        "type": "object",
-        "properties": {
-          "value": {
-            "type": "string",
-            "format": "uuid"
-          }
-        }
-      }
   - key: Content-Type
     value: application/json
   - key: Accept
@@ -30,31 +20,6 @@ body:
       "color": "#EF3aBD",
       "icon": "string"
     }
-  $type: |-
-    {
-      "type": "object",
-      "properties": {
-        "name": {
-          "type": "string",
-          "minLength": 1,
-          "maxLength": 80
-        },
-        "description": {
-          "type": "string",
-          "maxLength": 500
-        },
-        "color": {
-          "type": "string",
-          "pattern": "^#[0-9A-Fa-f]{6}$"
-        },
-        "icon": {
-          "type": "string",
-          "maxLength": 50
-        }
-      },
-      "required": [
-        "name"
-      ]
-    }
+settings: {}
 examples: ./.resources/Create a habit category.resources/examples
 order: 3000

@@ -11,18 +11,6 @@ body:
     {
       "refresh_token": "string"
     }
-  $type: |-
-    {
-      "type": "object",
-      "properties": {
-        "refresh_token": {
-          "type": "string",
-          "description": "A valid refresh token previously issued by the server."
-        }
-      },
-      "required": [
-        "refresh_token"
-      ]
-    }
+settings: {}
 examples: ./.resources/Refresh an access token.resources/examples
 order: 1000

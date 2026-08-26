@@ -1,14 +1,31 @@
 $kind: http-request
+name: Create User
 url: "{{baseUrl}}/auth/register"
 method: POST
 body:
   type: json
   content: |-
     {
-        "email": "test-user@test.io",
-        "password": "password123",
-        "displayName": "test-user"
+        "email": "{{$randomEmail}}",
+        "password": "{{$randomPassword}}",
+        "displayName": "{{$randomUserName}}"
     }
 auth:
   type: noauth
+scripts:
+  - type: afterResponse
+    code: |-
+      const response_body = pm.response.json();
+
+      const access_token = response_body.access_token;
+
+      console.log(access_token)
+
+      pm.test("Successful POST request", function () {
+          pm.expect(pm.response.code).to.be.oneOf([201, 202]);
+      });
+
+      pm.collectionVariables.set("access_token", access_token);
+    language: text/javascript
+settings: {}
 order: 2000

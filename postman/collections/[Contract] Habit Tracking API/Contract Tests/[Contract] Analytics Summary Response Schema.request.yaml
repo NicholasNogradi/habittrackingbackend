@@ -1,0 +1,38 @@
+$kind: http-request
+description: 'Generated from cURL: curl -X GET "{{baseUrl}}/analytics/summary?from=2025-01-01&to=2025-12-31" -H "Accept: application/json" -H "Authorization: Bearer {{contractAccessToken}}"'
+url: "{{baseUrl}}/analytics/summary?from=2025-01-01&to=2025-12-31"
+method: GET
+headers:
+  Accept: application/json
+  Authorization: Bearer {{contractAccessToken}}
+queryParams:
+  from: 2025-01-01
+  to: 2025-12-31
+scripts:
+  - type: afterResponse
+    code: |-
+      pm.test("Status code is 200", function () {
+          pm.response.to.have.status(200);
+      });
+      pm.test("Content-Type is application/json", function () {
+          pm.expect(pm.response.headers.get("Content-Type")).to.include("application/json");
+      });
+      pm.test("Analytics summary response matches contract schema", function () {
+          const json = pm.response.json();
+          pm.expect(json).to.have.property("totalHabits").that.is.a("number");
+          pm.expect(json).to.have.property("totalCheckins").that.is.a("number");
+          pm.expect(json).to.have.property("completionRate").that.is.a("number");
+          pm.expect(json).to.have.property("currentStreak").that.is.a("number");
+          pm.expect(json).to.have.property("longestStreak").that.is.a("number");
+          // Completion rate must be between 0 and 100
+          pm.expect(json.completionRate).to.be.at.least(0);
+          pm.expect(json.completionRate).to.be.at.most(100);
+          // Counts must be non-negative
+          pm.expect(json.totalHabits).to.be.at.least(0);
+          pm.expect(json.totalCheckins).to.be.at.least(0);
+          pm.expect(json.currentStreak).to.be.at.least(0);
+          pm.expect(json.longestStreak).to.be.at.least(0);
+      });
+    language: text/javascript
+settings: {}
+order: 8000

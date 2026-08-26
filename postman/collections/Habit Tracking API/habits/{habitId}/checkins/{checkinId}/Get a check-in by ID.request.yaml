@@ -7,34 +7,9 @@ pathVariables:
   - key: habitId
     value: 3fa85f64-5717-4562-b3fc-2c963f66afa6
     description: Unique identifier of the habit.
-    $type: |-
-      {
-        "type": "object",
-        "properties": {
-          "value": {
-            "type": "string",
-            "format": "uuid"
-          }
-        },
-        "required": [
-          "value"
-        ]
-      }
   - key: checkinId
     value: a1b2c3d4-e5f6-7890-abcd-ef1234567890
     description: Unique identifier of the check-in.
-    $type: |-
-      {
-        "type": "object",
-        "properties": {
-          "value": {
-            "type": "string",
-            "format": "uuid"
-          }
-        },
-        "required": [
-          "value"
-        ]
-      }
+settings: {}
 examples: ./.resources/Get a check-in by ID.resources/examples
 order: 1000

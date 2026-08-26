@@ -1,45 +1,70 @@
 $kind: collection
+name: Habit Tracking API
 description: |-
   ## Overview
-  The Habit Tracking API provides a comprehensive, RESTful interface for creating,
-  managing, and analysing personal habits and their completion records. It is designed
+
+  The Habit Tracking API provides a comprehensive, RESTful interface for creating,  
+  managing, and analysing personal habits and their completion records. It is designed  
   for multi-tenant SaaS deployments and supports both individual users and teams.
 
   ## Authentication
-  All endpoints (except `/auth/*`) require a valid **Bearer** (JWT) token obtained
-  via the OAuth 2.0 Authorization Code flow or the Password flow (for first-party
-  clients). Tokens expire after **3 600 seconds**; use the refresh-token grant to
+
+  All endpoints (except `/auth/\\*`) require a valid **Bearer** (JWT) token obtained  
+  via the OAuth 2.0 Authorization Code flow or the Password flow (for first-party  
+  clients). Tokens expire after **3 600 seconds**; use the refresh-token grant to  
   obtain a new access token without prompting the user.
 
   ## Versioning
-  The API is versioned through the URL path (`/v1`). Breaking changes will be
+
+  The API is versioned through the URL path (`/v1`). Breaking changes will be  
   introduced in a new major version. Minor and patch releases are backwards-compatible.
 
   ## Rate Limiting
-  Responses include `X-RateLimit-Limit`, `X-RateLimit-Remaining`, and
+
+  Responses include `X-RateLimit-Limit`, `X-RateLimit-Remaining`, and  
   `X-RateLimit-Reset` headers. Exceeding the limit returns **429 Too Many Requests**.
 
   ## Pagination
-  Collection endpoints support cursor-based pagination via `cursor` and `limit`
-  query parameters. Responses include a `pagination` envelope with `nextCursor` and
+
+  Collection endpoints support cursor-based pagination via `cursor` and `limit`  
+  query parameters. Responses include a `pagination` envelope with `nextCursor` and  
   `totalCount`.
 
   ## Idempotency
-  `POST` endpoints that create resources accept an optional `Idempotency-Key` header.
-  Submitting the same key within 24 hours returns the original response without
+
+  `POST` endpoints that create resources accept an optional `Idempotency-Key` header.  
+  Submitting the same key within 24 hours returns the original response without  
   creating a duplicate resource.
 
-
-  Contact Support:
-   Name: Platform Engineering
-   Email: platform-engineering@habittrack.io
+  Contact Support:  
+  Name: Platform Engineering  
+  Email: [platform-engineering@habittrack.io](https://mailto:platform-engineering@habittrack.io)
 variables:
-  baseUrl: ""
-  mockUrl: ""
-  bearerToken: ""
+  - key: baseUrl
+    value: ""
+    secret: false
+  - key: mockUrl
+    value: ""
+    secret: false
+  - key: access_token
+    secret: true
+  - key: bearer_token_029x
+    secret: true
+  - key: smokeAccessToken
+    value: ""
+    secret: false
+  - key: username
+    value: ""
+    secret: false
+  - key: password
+    value: ""
+    secret: false
+  - key: smokeHabitId
+    value: ""
+    secret: false
 auth:
-  - id: c92b271c-8bb7-447c-921f-3bf46c45777f
+  - id: 41dc523b-6b56-477f-a9d8-c49c44785143
     type: bearer
     name: bearer auth
     credentials:
-      token: "{{bearerToken}}"
+      token: "{{access_token}}"

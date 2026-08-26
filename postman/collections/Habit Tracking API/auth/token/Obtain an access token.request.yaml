@@ -29,5 +29,6 @@ body:
       value: string
     - key: client_secret
       value: string
+settings: {}
 examples: ./.resources/Obtain an access token.resources/examples
 order: 3000

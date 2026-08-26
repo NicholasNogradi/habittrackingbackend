@@ -7,18 +7,6 @@ pathVariables:
   - key: categoryId
     value: 1c3b4d12-89ab-4def-0123-456789abcdef
     description: Unique identifier of the category.
-    $type: |-
-      {
-        "type": "object",
-        "properties": {
-          "value": {
-            "type": "string",
-            "format": "uuid"
-          }
-        },
-        "required": [
-          "value"
-        ]
-      }
+settings: {}
 examples: ./.resources/Get a category by ID.resources/examples
 order: 1000

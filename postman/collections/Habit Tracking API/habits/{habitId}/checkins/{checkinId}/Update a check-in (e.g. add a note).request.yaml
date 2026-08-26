@@ -7,7 +7,6 @@ headers:
     description: |
       ETag value for optimistic concurrency control. If the resource has
       changed since the ETag was retrieved, the server returns **412**.
-    $type: string
   - key: Content-Type
     value: application/json
   - key: Accept
@@ -16,35 +15,9 @@ pathVariables:
   - key: habitId
     value: 3fa85f64-5717-4562-b3fc-2c963f66afa6
     description: Unique identifier of the habit.
-    $type: |-
-      {
-        "type": "object",
-        "properties": {
-          "value": {
-            "type": "string",
-            "format": "uuid"
-          }
-        },
-        "required": [
-          "value"
-        ]
-      }
   - key: checkinId
     value: a1b2c3d4-e5f6-7890-abcd-ef1234567890
     description: Unique identifier of the check-in.
-    $type: |-
-      {
-        "type": "object",
-        "properties": {
-          "value": {
-            "type": "string",
-            "format": "uuid"
-          }
-        },
-        "required": [
-          "value"
-        ]
-      }
 body:
   type: json
   content: |-
@@ -54,34 +27,6 @@ body:
       "note": "string",
       "mood": 2
     }
-  $type: |-
-    {
-      "type": "object",
-      "properties": {
-        "status": {
-          "type": "string",
-          "enum": [
-            "completed",
-            "skipped",
-            "missed"
-          ],
-          "description": "Completion status of a check-in period."
-        },
-        "value": {
-          "type": "number",
-          "format": "double"
-        },
-        "note": {
-          "type": "string",
-          "maxLength": 1000
-        },
-        "mood": {
-          "type": "integer",
-          "minimum": 1,
-          "maximum": 5,
-          "format": "int32"
-        }
-      }
-    }
+settings: {}
 examples: ./.resources/Update a check-in (e.g. add a note).resources/examples
 order: 2000
