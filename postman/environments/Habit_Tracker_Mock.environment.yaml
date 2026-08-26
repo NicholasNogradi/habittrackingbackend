@@ -1,12 +1,5 @@
-owner: "55289350"
-team: "13347347"
-lastUpdatedBy: "55289350"
-lastRevision: 1782222192000
 name: Habit_Tracker_Mock
-color: null
 values:
   - key: baseUrl
-    value: https://6021fb33-2769-4b19-8a8f-f5fc68f04961.mock.pstmn.io
-    enabled: true
-createdAt: 2026-06-04T18:35:55.000Z
-updatedAt: 2026-06-23T13:43:12.000Z
+    value: 'https://6021fb33-2769-4b19-8a8f-f5fc68f04961.mock.pstmn.io'
+color: 0
