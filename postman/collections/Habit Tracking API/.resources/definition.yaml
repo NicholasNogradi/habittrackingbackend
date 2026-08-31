@@ -42,25 +42,33 @@ description: |-
 variables:
   - key: baseUrl
     value: ""
+    disabled: false
     secret: false
   - key: mockUrl
     value: ""
+    disabled: false
     secret: false
   - key: access_token
     secret: true
+    disabled: false
   - key: bearer_token_029x
     secret: true
+    disabled: false
   - key: smokeAccessToken
     value: ""
+    disabled: false
     secret: false
   - key: username
     value: ""
+    disabled: false
     secret: false
   - key: password
     value: ""
+    disabled: false
     secret: false
   - key: smokeHabitId
     value: ""
+    disabled: false
     secret: false
 auth:
   - id: 41dc523b-6b56-477f-a9d8-c49c44785143

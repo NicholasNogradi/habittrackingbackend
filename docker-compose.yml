@@ -1,0 +1,21 @@
+services:
+  api:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: habit-tracker-api:local
+    container_name: habit-tracker-api
+    ports:
+      - "8080:8080"
+    env_file:
+      - .env
+    environment:
+      NODE_ENV: production
+      DB_STORAGE: /app/data/habit-tracker.sqlite
+    volumes:
+      - habit-tracker-data:/app/data
+    restart: unless-stopped
+
+volumes:
+  habit-tracker-data:
+    name: habit-tracker-data
