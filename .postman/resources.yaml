@@ -4,8 +4,7 @@ workspace:
 localResources:
   collections:
     - ../postman/collections/Habit Tracking API
-  environments:
-    - ../postman/environments/Habit_Tracker_Mock.environment.yaml
+  environments: []
   specs: []
 
 # Each entry here maps a local resource to one or more corresponding objects in Postman Cloud
@@ -16,8 +15,7 @@ cloudResources:
     ../postman/collections/[Contract] Habit Tracking API: 55289350-b862964b-1b8d-4d6a-88fc-d3f01d57dad4
     ../postman/collections/[Negative] Habit Tracking API: 55289350-27eae2c3-fa49-48e2-a534-142f89121a40
     ../postman/collections/[Smoke] Habit Tracking API: 55289350-1e41dc11-8477-412e-af26-d4487bb3984e
-  environments:
-    ../postman/environments/Habit_Tracker_Mock.environment.yaml: 55289350-ebb73393-4917-4ca0-853a-a4e3282742ed
+  environments: {}
   specs: {}
 resourceNameMappings:
   specs:
