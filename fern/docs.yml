@@ -1,0 +1,43 @@
+instances:
+  - url: nn-demo.docs.buildwithfern.com
+
+
+title: Fern Demo Starter
+
+tabs:
+  home:
+    display-name: Docs
+    icon: home
+  API Reference:
+    display-name: API Reference
+    icon: puzzle
+
+navigation:
+  - tab: home
+    layout:
+      - section: Get started
+        contents:
+          - page: Welcome
+            path: docs/pages/hello-world.mdx
+      - section: Changelog
+        contents:
+          - changelog: docs/changelog
+  - tab: API Reference
+    layout:
+      - api: Habit Tracking API
+
+navbar-links:
+  - type: minimal
+    text: Fork this repo
+    url: https://github.com/fern-api/docs-starter
+  - type: filled
+    text: Dashboard
+    url: https://dashboard.buildwithfern.com
+
+colors:
+  accent-primary:
+    dark: "#70E155"
+    light: "#008700"
+
+
+css: styles.css

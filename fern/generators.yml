@@ -1,0 +1,3 @@
+api:
+  specs:
+    - openapi: ../postman/specs/index.yaml
