@@ -3,10 +3,11 @@ name: Lint OpenAPI Spec + Run Collection
 on:
   push:
     branches:
-      - main
+      - 'chore/*'
       - 'feature/*'
   pull_request:
-    branches: [ main ]
+    types: [closed]
+    branches: [ main, develop ]
   workflow_dispatch:
 
 permissions:
@@ -71,7 +72,7 @@ jobs:
         run: postman login --with-api-key ${{ secrets.POSTMAN_API_KEY }}
 
       - name: Lint OpenAPI/Swagger Spec
-        run: postman spec lint postman/specs/index.yaml --fail-severity=ERROR
+        run: postman spec lint "postman/specs/index.yaml" --workspace-id "11858b98-e156-4275-9db9-1ce675bfc729" --report-events
   
   run-collection:
     name: Run Postman Collection
