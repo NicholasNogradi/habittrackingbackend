@@ -1,0 +1,18 @@
+---
+title: "Check-ins"
+description: "Record completion events against a habit."
+---
+
+A **check-in** is a single completion record for a habit — the raw data streaks and analytics are computed from. Check-ins are always nested under a habit at `/habits/{habitId}/checkins`.
+
+## Operations
+
+- `listCheckins` — paginated. Filter by `from`, `to`, and `status`.
+- `createCheckin` — record a completion. Honors `Idempotency-Key`.
+- `getCheckin` — read a single check-in.
+- `updateCheckin` — amend status or notes (`If-Match` required).
+- `deleteCheckin` — remove a check-in (`If-Match` required).
+
+<Callout intent="info">
+Deleting or amending past check-ins retroactively recomputes affected streaks. See [Streaks](/guides/streaks).
+</Callout>

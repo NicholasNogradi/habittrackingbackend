@@ -1,0 +1,22 @@
+---
+title: "Introduction"
+description: "A RESTful API for tracking habits, check-ins, streaks, and analytics."
+---
+
+The Habit Tracking API is a multi-tenant, OAuth 2.0-secured REST API for creating and analysing personal habits. Every route lives under `/v1` and returns JSON.
+
+## Resources
+
+- **Users** — the authenticated principal (`/users/me`).
+- **Categories** — user-scoped grouping for habits.
+- **Habits** — the trackable behavior; supports full CRUD.
+- **Check-ins** — completion records for a habit.
+- **Streaks** — computed consecutive-completion runs.
+- **Reminders** — scheduled nudges attached to a habit.
+- **Analytics** — aggregate summaries and per-habit trends.
+
+## Where to go next
+
+- Follow the [Quickstart](/quickstart) to make your first authenticated call.
+- Read the [Concepts](/concepts/authentication) pages for behavior shared across every endpoint (auth, errors, rate limits, pagination, idempotency, concurrency).
+- Browse the **API Reference** tab for exact request and response schemas.

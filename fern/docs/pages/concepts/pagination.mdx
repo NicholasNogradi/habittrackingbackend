@@ -1,0 +1,34 @@
+---
+title: "Pagination"
+description: "Cursor-based pagination for collection endpoints."
+---
+
+Collection endpoints (`listHabits`, `listCategories`, `listCheckins`, `listReminders`, `listStreaks`, …) use **cursor-based** pagination. Two query parameters are accepted:
+
+| Query    | Purpose                                                     |
+|----------|-------------------------------------------------------------|
+| `cursor` | Opaque cursor returned by the previous response.            |
+| `limit`  | Max items per page. Endpoint-specific bounds apply.         |
+
+## Response envelope
+
+```json
+{
+  "data": [ /* … */ ],
+  "pagination": {
+    "totalCount": 128,
+    "hasMore": true,
+    "nextCursor": "eyJpZCI6...",
+    "prevCursor": null
+  }
+}
+```
+
+## Paging through a collection
+
+Loop while `hasMore` is `true`, passing `nextCursor` back as `cursor`:
+
+```bash
+curl "http://localhost:8080/v1/habits?limit=50&cursor=$CURSOR" \
+  -H "Authorization: Bearer $TOKEN"
+```

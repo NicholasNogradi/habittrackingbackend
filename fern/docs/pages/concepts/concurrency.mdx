@@ -1,0 +1,30 @@
+---
+title: "Concurrency"
+description: "Optimistic locking with ETag and If-Match."
+---
+
+The API uses optimistic concurrency to prevent lost updates when two clients modify the same resource.
+
+## Reads return an ETag
+
+Every `GET` on a resource returns strong validators:
+
+```http
+HTTP/1.1 200 OK
+ETag: "W/\"7f3c...\""
+Last-Modified: Wed, 03 Sep 2025 12:00:00 GMT
+```
+
+## Writes require If-Match
+
+`PATCH`, `PUT`, and `DELETE` require the client to echo the last-seen `ETag` in `If-Match`. If the resource has changed since, the request fails with **412 Precondition Failed** — refetch, reconcile, and retry.
+
+```bash
+curl -X PATCH http://localhost:8080/v1/habits/$ID \
+  -H "Authorization: Bearer $TOKEN" \
+  -H "If-Match: \"7f3c...\"" \
+  -H "Content-Type: application/json" \
+  -d '{ "name": "Meditate 10m" }'
+```
+
+Missing `If-Match` on a write is a **428 Precondition Required**.

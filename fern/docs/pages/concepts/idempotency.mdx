@@ -1,0 +1,22 @@
+---
+title: "Idempotency"
+description: "Safely retry POST requests with Idempotency-Key."
+---
+
+Every `POST` that creates a resource accepts an optional `Idempotency-Key` header. Replaying the same key within **24 hours** returns the original response — the resource is not created twice.
+
+```bash
+curl -X POST http://localhost:8080/v1/habits \
+  -H "Authorization: Bearer $TOKEN" \
+  -H "Content-Type: application/json" \
+  -H "Idempotency-Key: 6f6a4f9a-2b3f-4c9c-9f7b-1e0d0f7d2f88" \
+  -d '{ "name": "Meditate", "frequency": "daily" }'
+```
+
+## Which endpoints honor it
+
+The header is respected on every `create*` operation: `createHabit`, `createCategory`, `createCheckin`, `createReminder`, and the `/auth/token` grants that mint refresh tokens.
+
+## Choosing a key
+
+Use a value that uniquely identifies the client's intent — typically a UUID generated per user action. Keys are scoped to the authenticated user; reusing a key across users is safe.
