@@ -6,7 +6,7 @@ on:
       - 'chore/*'
       - 'feature/*'
   pull_request:
-    types: [closed]
+    types: [opened, synchronize, reopened]
     branches: [ main, develop ]
   workflow_dispatch:
 
@@ -17,6 +17,8 @@ jobs:
   diff-spec:
     name: Compare Feature Spec With Main
     runs-on: ubuntu-latest
+    outputs:
+      breaking_changes: ${{ steps.diff.outputs.breaking_changes }}
     steps:
       - name: Checkout feature branch
         uses: actions/checkout@v4
@@ -37,13 +39,56 @@ jobs:
             > .openapi-diff/main/index.yaml
 
       - name: Compare main with feature branch
+        id: diff
+        shell: bash
         run: |
+          set +e
           docker run --rm \
             -v "$GITHUB_WORKSPACE:/workspace:ro" \
             openapitools/openapi-diff:2.1.7 \
             --fail-on-incompatible \
             /workspace/.openapi-diff/main/index.yaml \
-            /workspace/postman/specs/index.yaml
+            /workspace/postman/specs/index.yaml \
+            | tee openapi-diff-report.txt
+          exit_code=${PIPESTATUS[0]}
+          if [ "$exit_code" -ne 0 ]; then
+            echo "breaking_changes=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "breaking_changes=false" >> "$GITHUB_OUTPUT"
+          fi
+          exit $exit_code
+
+  flag-breaking-changes:
+    name: Flag Breaking API Changes on PR
+    if: >-
+      always() &&
+      github.event_name == 'pull_request' &&
+      github.event.pull_request.head.repo.full_name == github.repository
+    runs-on: ubuntu-latest
+    needs: diff-spec
+    permissions:
+      issues: write
+    steps:
+      - name: Comment on Pull Request
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const diffFailed = '${{ needs.diff-spec.result }}' === 'failure';
+            const breakingChanges = '${{ needs.diff-spec.outputs.breaking_changes }}' === 'true';
+            const body = (diffFailed || breakingChanges)
+              ? [
+                  '### 🚨 Breaking API change risk detected',
+                  '',
+                  'The OpenAPI spec diff between this branch and `main` found incompatible changes.',
+                  'Review the **Compare Feature Spec With Main** job logs before merging — existing API consumers could break.'
+                ].join('\n')
+              : '### ✅ No breaking API changes detected\n\nThe OpenAPI spec is backward compatible with `main`.';
+            github.rest.issues.createComment({
+              issue_number: context.issue.number,
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              body
+            });
 
   lint-spec:
     name: Lint OpenAPI/Swagger Spec

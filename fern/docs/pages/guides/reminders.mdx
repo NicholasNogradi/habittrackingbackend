@@ -1,0 +1,16 @@
+---
+title: "Reminders"
+description: "Scheduled nudges attached to a habit."
+---
+
+Reminders are scheduled prompts that ask a user to check in on a habit. They are nested under a habit at `/habits/{habitId}/reminders` — a reminder cannot exist without a parent habit.
+
+## Operations
+
+- `listReminders` — list reminders for a habit.
+- `createReminder` — schedule a new reminder. Honors `Idempotency-Key`.
+- `getReminder` — read a single reminder.
+- `updateReminder` — change time, cadence, or channel (`If-Match` required).
+- `deleteReminder` — cancel a reminder (`If-Match` required).
+
+See the **API Reference** tab for the reminder schema (time, day-of-week mask, delivery channel).

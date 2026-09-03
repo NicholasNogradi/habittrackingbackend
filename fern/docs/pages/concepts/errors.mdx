@@ -1,0 +1,35 @@
+---
+title: "Errors"
+description: "RFC 7807 Problem Details, plus field-level validation errors."
+---
+
+Every error response is a [Problem Details](https://datatracker.ietf.org/doc/html/rfc7807) object with `application/problem+json` content type.
+
+```json
+{
+  "type": "https://developers.habittrack.io/errors/validation",
+  "title": "Invalid request",
+  "status": 400,
+  "detail": "One or more fields failed validation.",
+  "instance": "/v1/habits",
+  "traceId": "01J...",
+  "errors": [
+    { "path": "frequency", "message": "must be one of daily|weekly|custom" }
+  ]
+}
+```
+
+## Common statuses
+
+| Status | Meaning                                                          |
+|--------|------------------------------------------------------------------|
+| 400    | Malformed request body or query.                                 |
+| 401    | Missing / invalid / expired access token.                        |
+| 403    | Authenticated but not permitted for this resource.               |
+| 404    | Resource does not exist or is not visible to the caller.         |
+| 409    | Conflict — e.g., duplicate resource or business-rule violation.  |
+| 412    | Precondition failed — see [Concurrency](/concepts/concurrency).  |
+| 422    | Semantic validation failure (fields present but invalid).        |
+| 429    | Rate limit exceeded — see [Rate limiting](/concepts/rate-limiting). |
+
+Validation failures populate `errors[]` with one entry per invalid field. `traceId` is safe to share with support.

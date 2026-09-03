@@ -1,0 +1,16 @@
+---
+title: "Categories"
+description: "Group habits into user-scoped categories."
+---
+
+Categories are optional, user-owned labels that group related habits (e.g., "Health", "Learning"). Each habit references at most one category.
+
+## Operations
+
+- `listCategories` — paginated list of the caller's categories.
+- `createCategory` — create a new category. Honors `Idempotency-Key`.
+- `getCategory` — read a single category by ID.
+- `updateCategory` — rename or recolor a category (`If-Match` required).
+- `deleteCategory` — remove a category. Habits pointing at it are unlinked, not deleted.
+
+See the **API Reference** tab for exact fields and constraints.

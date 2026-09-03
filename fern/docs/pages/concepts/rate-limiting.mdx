@@ -1,0 +1,22 @@
+---
+title: "Rate limiting"
+description: "Per-client request quotas and the headers that describe them."
+---
+
+Every response includes rate-limit headers so clients can pace themselves without probing:
+
+| Header                  | Meaning                                                   |
+|-------------------------|-----------------------------------------------------------|
+| `X-RateLimit-Limit`     | Max requests permitted in the current window.             |
+| `X-RateLimit-Remaining` | Requests remaining before throttling kicks in.            |
+| `X-RateLimit-Reset`     | Unix timestamp when the window resets.                    |
+
+## Being throttled
+
+When you exceed the limit, the API returns **429 Too Many Requests** with a `Retry-After` header (in seconds). Wait that long before retrying.
+
+```http
+HTTP/1.1 429 Too Many Requests
+Retry-After: 12
+Content-Type: application/problem+json
+```

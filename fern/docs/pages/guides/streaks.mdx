@@ -1,0 +1,15 @@
+---
+title: "Streaks"
+description: "Derived consecutive-completion runs for a habit."
+---
+
+Streaks are **computed**, not written. The API derives them from check-in history for the parent habit — there is no `POST` or `DELETE` on streak resources.
+
+## Operations
+
+- `listStreaks` — historical streaks for a habit, paginated.
+- `getCurrentStreak` — the streak in progress, or `null` if the last window was missed.
+
+<Callout intent="warn">
+Editing or deleting a past [check-in](/guides/check-ins) can break or extend an existing streak — the streak list is recomputed on each read.
+</Callout>

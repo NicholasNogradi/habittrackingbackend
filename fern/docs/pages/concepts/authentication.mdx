@@ -1,0 +1,39 @@
+---
+title: "Authentication"
+description: "OAuth 2.0 grants, refresh rotation, and Bearer tokens."
+---
+
+Every route outside `/auth/*` requires a `Bearer` access token in the `Authorization` header. Missing, invalid, or expired tokens return **401** with a `WWW-Authenticate` challenge.
+
+## Token response envelope
+
+```json
+{
+  "access_token": "<jwt>",
+  "token_type": "Bearer",
+  "expires_in": 3600,
+  "refresh_token": "<opaque>",
+  "scope": "habits:read habits:write ..."
+}
+```
+
+## Supported grants
+
+All grants are served by `POST /v1/auth/token` (see `createToken` in the API Reference).
+
+| `grant_type`         | Purpose                                              | Refresh token |
+|----------------------|------------------------------------------------------|---------------|
+| `password`           | First-party clients exchanging user credentials.     | Yes           |
+| `refresh_token`      | Rotate an expiring access token (see below).         | Yes (rotated) |
+| `authorization_code` | Standard OAuth code flow (60s single-use codes).     | Yes           |
+| `client_credentials` | Machine-to-machine calls with a scoped token.        | No            |
+
+## Refresh rotation and reuse detection
+
+`POST /v1/auth/token/refresh` returns a new access token **and** a new refresh token; the presented refresh token is revoked. Presenting an already-rotated token is treated as theft — the entire token chain for that user is revoked.
+
+## Revoking a token
+
+`POST /v1/auth/token/revoke` is idempotent and returns **204**.
+
+See `createToken`, `refreshToken`, and `revokeToken` in the API Reference for exact request and response shapes.

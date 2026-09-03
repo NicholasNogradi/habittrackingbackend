@@ -1,0 +1,33 @@
+---
+title: "Quickstart"
+description: "Register, get a token, and make your first authenticated call."
+---
+
+The API listens on `http://localhost:8080` by default. All routes are prefixed with `/v1`.
+
+## 1. Register a user
+
+```bash
+curl -X POST http://localhost:8080/v1/auth/register \
+  -H 'Content-Type: application/json' \
+  -d '{"email":"me@example.com","password":"password123","displayName":"Me"}'
+```
+
+## 2. Exchange credentials for an access token
+
+```bash
+curl -X POST http://localhost:8080/v1/auth/token \
+  -H 'Content-Type: application/json' \
+  -d '{"grant_type":"password","username":"me@example.com","password":"password123"}'
+```
+
+The response contains an `access_token` (JWT) and a `refresh_token`. See [Authentication](/concepts/authentication) for the other supported grants.
+
+## 3. Call a protected endpoint
+
+```bash
+curl http://localhost:8080/v1/habits \
+  -H 'Authorization: Bearer <access_token>'
+```
+
+That's it. From here, jump into the **API Reference** tab to explore every operation, or read the [Concepts](/concepts/authentication) pages to learn how errors, pagination, idempotency, and concurrency work across the API.

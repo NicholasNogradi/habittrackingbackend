@@ -1,0 +1,14 @@
+---
+title: "Users"
+description: "Read and manage the authenticated principal."
+---
+
+The API exposes a single-user surface at `/users/me`. There is no admin route for reading other users — every request operates on the caller identified by the access token.
+
+## Operations
+
+- `getCurrentUser` — read the authenticated user's profile.
+- `updateCurrentUser` — patch display name, email, or preferences.
+- `deleteCurrentUser` — permanently delete the account and all owned data.
+
+See the **API Reference** tab for exact request and response schemas.

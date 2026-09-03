@@ -1,0 +1,80 @@
+instances:
+  - url: nn-demo.docs.buildwithfern.com
+
+
+title: Fern Demo Starter
+
+landing-page:
+  page: Welcome
+  path: ./docs/pages/welcome.mdx
+  slug: /welcome
+
+tabs:
+  home:
+    display-name: Docs
+    icon: home
+  API Reference:
+    display-name: API Reference
+    icon: puzzle
+
+navigation:
+  - tab: home
+    layout:
+      - section: Get started
+        contents:
+          - page: Introduction
+            path: docs/pages/get-started/introduction.mdx
+          - page: Quickstart
+            path: docs/pages/get-started/quickstart.mdx
+      - section: Concepts
+        contents:
+          - page: Authentication
+            path: docs/pages/concepts/authentication.mdx
+          - page: Errors
+            path: docs/pages/concepts/errors.mdx
+          - page: Rate limiting
+            path: docs/pages/concepts/rate-limiting.mdx
+          - page: Pagination
+            path: docs/pages/concepts/pagination.mdx
+          - page: Idempotency
+            path: docs/pages/concepts/idempotency.mdx
+          - page: Concurrency
+            path: docs/pages/concepts/concurrency.mdx
+      - section: Guides
+        contents:
+          - page: Users
+            path: docs/pages/guides/users.mdx
+          - page: Categories
+            path: docs/pages/guides/categories.mdx
+          - page: Habits
+            path: docs/pages/guides/habits.mdx
+          - page: Check-ins
+            path: docs/pages/guides/check-ins.mdx
+          - page: Streaks
+            path: docs/pages/guides/streaks.mdx
+          - page: Reminders
+            path: docs/pages/guides/reminders.mdx
+          - page: Analytics
+            path: docs/pages/guides/analytics.mdx
+      - section: Changelog
+        contents:
+          - changelog: docs/changelog
+  - tab: API Reference
+    layout:
+      - api: Habit Tracking API
+
+navbar-links:
+  - type: minimal
+    text: Fork this repo
+    url: https://github.com/fern-api/docs-starter
+  - type: filled
+    text: Dashboard
+    url: https://dashboard.buildwithfern.com
+
+colors:
+  accent-primary:
+    dark: "#70E155"
+    light: "#008700"
+
+
+css: styles.css

@@ -1,0 +1,15 @@
+---
+title: "Analytics"
+description: "Aggregate summaries and per-habit trends."
+---
+
+Analytics endpoints return pre-aggregated views over a user's check-in history. They are read-only.
+
+## Operations
+
+- `getAnalyticsSummary` — cross-habit totals for a date range (`from`, `to`).
+- `getHabitTrends` — per-habit time series for a range at a `granularity` of `day`, `week`, or `month`.
+
+<Callout intent="info">
+Analytics reflect the current state of check-ins at query time — editing a past [check-in](/guides/check-ins) changes future summary responses.
+</Callout>

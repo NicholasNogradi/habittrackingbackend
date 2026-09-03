@@ -1,0 +1,17 @@
+---
+title: "Habits"
+description: "Create and manage the trackable behaviors at the core of the API."
+---
+
+A **habit** is the recurring behavior a user wants to track — e.g., "Meditate", "Run 5km". Habits carry a `frequency` (`daily`, `weekly`, or `custom`), an optional `categoryId`, and a `status` (`active`, `paused`, `archived`).
+
+## Operations
+
+- `listHabits` — paginated. Filter by `categoryId`, `status`, `frequency`; sort with `sort`.
+- `createHabit` — create a habit. Honors `Idempotency-Key`.
+- `getHabit` — read a single habit by ID.
+- `replaceHabit` — full `PUT` replacement (`If-Match` required).
+- `updateHabit` — partial `PATCH` (`If-Match` required).
+- `deleteHabit` — cascade-deletes check-ins, streaks, and reminders.
+
+Habits are the parent for check-ins, streaks, and reminders — those live under `/habits/{habitId}/…`.
