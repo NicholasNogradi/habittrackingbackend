@@ -1,0 +1,51 @@
+email,password,displayName,name,frequency,description,targetCount
+alice.johnson@example.com,P@ssw0rd!1,Alice Johnson,Morning Run,daily,Run outdoors or on a treadmill to start the day with cardio,1
+bob.smith@example.com,S3cur3#Pass2,Bob Smith,Drink Water,daily,Drink at least 8 glasses of water throughout the day,8
+carol.white@example.com,MyP@ss!word3,Carol White,Read,daily,Read a book or long-form article for at least 20 minutes,1
+david.brown@example.com,Tr0ub4dor&4,David Brown,Meditate,daily,Practice mindfulness or guided meditation to reduce stress,1
+eva.martinez@example.com,C0rrect!H0rse5,Eva Martinez,Push-Ups,daily,Complete a set of push-ups to build upper body strength,3
+frank.lee@example.com,B@ttery$Stap6,Frank Lee,Journaling,daily,Write thoughts feelings and reflections in a personal journal,1
+grace.kim@example.com,L0gin#Secure7,Grace Kim,Walk 10k Steps,daily,Reach a daily step count goal using a pedometer or phone,1
+henry.clark@example.com,P@$$word!890,Henry Clark,Stretch,daily,Perform a full-body stretching routine to improve flexibility,1
+isabelle.davis@example.com,Qwerty!2345A,Isabelle Davis,No Sugar,daily,Avoid added sugars in meals and snacks for the full day,1
+james.wilson@example.com,S@feP@ssw0rd1,James Wilson,Cold Shower,daily,Take a cold shower to boost alertness and circulation,1
+karen.moore@example.com,Xk9#mLpQ!r2s,Karen Moore,Weekly Review,weekly,Review goals progress and plan for the upcoming week,1
+liam.taylor@example.com,Zt7$nBvC!w3x,Liam Taylor,Meal Prep,weekly,Prepare healthy meals in advance to stay on track with nutrition,1
+mia.anderson@example.com,Ry4@pJhG!k5m,Mia Anderson,Long Run,weekly,Complete a longer distance run for endurance training,1
+noah.thomas@example.com,Uw6#qFdS!j7n,Noah Thomas,Deep Clean,weekly,Thoroughly clean one room or area of the home,1
+olivia.jackson@example.com,Vb8$rEcT!i9o,Olivia Jackson,Call Family,weekly,Reach out to a family member or close friend by phone or video,1
+peter.harris@example.com,Mc2@sWzY!h1p,Peter Harris,Grocery Shop,weekly,Buy fresh produce and healthy staples for the week ahead,1
+quinn.martin@example.com,Nd3#tXaU!g0q,Quinn Martin,Yoga Class,weekly,Attend or follow a full yoga session for strength and flexibility,2
+rachel.garcia@example.com,Oe4$uYbV!f8r,Rachel Garcia,Budget Review,weekly,Check spending track expenses and adjust budget as needed,1
+samuel.rodriguez@example.com,Pf5@vZcW!e7s,Samuel Rodriguez,Social Activity,weekly,Spend quality time with friends or attend a community event,1
+tina.lewis@example.com,Qg6#wAdX!d6t,Tina Lewis,Learning Session,weekly,Dedicate focused time to learning a new skill or topic,3
+uma.walker@example.com,Rh7$xBeY!c5u,Uma Walker,Monthly Goal Setting,monthly,Define three to five meaningful goals for the upcoming month,1
+victor.hall@example.com,Si8@yCfZ!b4v,Victor Hall,Read a Book,monthly,Finish reading one complete book during the month,1
+wendy.allen@example.com,Tj9#zDgA!a3w,Wendy Allen,Financial Review,monthly,Review investments savings and financial goals for the month,1
+xavier.young@example.com,Uk0$aEhB!z2x,Xavier Young,Declutter,monthly,Sort through belongings and donate or discard what is no longer needed,1
+yara.hernandez@example.com,Vl1@bFiC!y1y,Yara Hernandez,Volunteer,monthly,Give time to a local charity or community organization,2
+zach.king@example.com,Wm2#cGjD!x0z,Zach King,Nature Hike,monthly,Complete a hike in a park or natural area for exercise and mindfulness,1
+amber.scott@example.com,Xn3$dHkE!w9a,Amber Scott,Dentist or Health Check,monthly,Schedule and attend a routine health or dental appointment,1
+brian.green@example.com,Yo4@eIlF!v8b,Brian Green,Try New Recipe,weekly,Cook a meal using an ingredient or cuisine you have never tried before,1
+claire.baker@example.com,Zp5#fJmG!u7c,Claire Baker,Digital Detox,weekly,Spend one full day with minimal screen time and social media use,1
+derek.adams@example.com,Aq6$gKnH!t6d,Derek Adams,Gratitude List,daily,Write down three things you are grateful for each morning or evening,1
+elena.nelson@example.com,Br7@hLoI!s5e,Elena Nelson,Floss Teeth,daily,Floss teeth after brushing to maintain gum health,1
+finn.carter@example.com,Cs8#iMpJ!r4f,Finn Carter,No Alcohol,weekly,Go the full week without consuming alcoholic beverages,1
+gina.mitchell@example.com,Dt9$jNqK!q3g,Gina Mitchell,Sleep by 10pm,daily,Be in bed with lights off by 10pm to improve sleep quality,1
+hugo.perez@example.com,Eu0@kOrL!p2h,Hugo Perez,Practice Instrument,daily,Spend at least 30 minutes practicing a musical instrument,1
+iris.roberts@example.com,Fv1#lPsM!o1i,Iris Roberts,Language Practice,daily,Use a language learning app or conversation partner for 15 minutes,1
+jake.turner@example.com,Gw2$mQtN!n0j,Jake Turner,Evening Walk,daily,Take a 20 to 30 minute walk after dinner to aid digestion,1
+kim.phillips@example.com,Hx3@nRuO!m9k,Kim Phillips,Breathing Exercises,daily,Practice deep breathing or box breathing for stress relief,2
+leo.campbell@example.com,Iy4#oSvP!l8l,Leo Campbell,Vitamins,daily,Take daily vitamins or supplements as recommended,1
+maya.parker@example.com,Jz5$pTwQ!k7m,Maya Parker,Screen-Free Morning,daily,Avoid all screens for the first 30 minutes after waking up,1
+neil.evans@example.com,Ka6@qUxR!j6n,Neil Evans,Strength Training,weekly,Complete a full resistance or weight training workout,3
+omar.edwards@example.com,Lb7#rVyS!i5o,Omar Edwards,Swim,weekly,Swim laps at a local pool for low-impact cardio exercise,2
+paula.collins@example.com,Mc8$sWzT!h4p,Paula Collins,Cycling,weekly,Go for a bike ride outdoors or complete a stationary cycling session,2
+ray.stewart@example.com,Nd9@tXaU!g3q,Ray Stewart,Creative Writing,weekly,Spend time writing fiction poetry or creative non-fiction,2
+sara.sanchez@example.com,Oe0#uYbV!f2r,Sara Sanchez,Networking,monthly,Reach out to a professional contact or attend a networking event,2
+tom.morris@example.com,Pf1$vZcW!e1s,Tom Morris,Personal Development Book,monthly,Read a non-fiction book focused on self-improvement or skills,1
+ursula.rogers@example.com,Qg2@wAdX!d0t,Ursula Rogers,Carbon Audit,monthly,Review household energy use and identify ways to reduce footprint,1
+vince.reed@example.com,Rh3#xBeY!c9u,Vince Reed,Photo Walk,monthly,Go on a walk specifically to take photos and practice photography,1
+willa.cook@example.com,Si4$yCfZ!b8v,Willa Cook,Acts of Kindness,weekly,Intentionally perform at least one random act of kindness,3
+xander.morgan@example.com,Tj5@zDgA!a7w,Xander Morgan,Podcast Learning,weekly,Listen to an educational or industry-relevant podcast episode,3
+yolanda.bell@example.com,Uk6#aEhB!z6x,Yolanda Bell,Review and Reflect,daily,Spend 10 minutes at the end of the day reviewing what went well,1
